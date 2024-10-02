@@ -32,6 +32,27 @@ class Employee extends DatabaseConnection
 
         $sql = "INSERT INTO emp_docs (emp_id, doc_name, doc_path, updated_by) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
+        if ($stmt){
+            mysqli_stmt_bind_param($stmt, 'isss', $id, $doc_name, $doc_path, $updated_by);
+
+            if (mysqli_stmt_execute($stmt)) {
+
+                $response = array('success' => true, 'message' => 'Employee Documents Submitted successfully');
+                echo json_encode($response);
+                die();
+            } else {
+                $response = array('success' => false, 'message' => 'Failed to Submit documents');
+                echo json_encode($response);
+                die();
+            }
+        }
+    }
+
+    public function updateEmployeeDoc($id, $doc_name, $doc_path, $updated_by)
+    {
+
+        $sql = "INSERT INTO emp_docs (emp_id, doc_name, doc_path, updated_by) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->conn, $sql);
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, 'isss', $id, $doc_name, $doc_path, $updated_by);
 
