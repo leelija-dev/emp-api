@@ -3,49 +3,49 @@ require_once("config.php");
 class Employee extends DatabaseConnection
 {
     //GET EMPLOYEE DETAILS USING EMPLOYEE ID
-
     public function getEmployeeDetails($id)
-{
-    $query = "SELECT employees.*, emp_docs.* 
+    {
+        header('Content-Type: application/json');
+        $query = "SELECT employees.*, emp_docs.* 
               FROM employees 
               LEFT JOIN emp_docs ON employees.emp_id = emp_docs.emp_id 
               WHERE employees.emp_id = ?";
 
-    $stmt = mysqli_prepare($this->conn, $query);
+        $stmt = mysqli_prepare($this->conn, $query);
 
-    if ($stmt) {
-        
-        $stmt->bind_param('i', $id);
-        $stmt->execute();
+        if ($stmt) {
 
-        $result = mysqli_stmt_get_result($stmt);
-        $employeeDetails = mysqli_fetch_assoc($result);
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
 
-        if ($employeeDetails) {
-            $response = array(
-                'success' => true, 
-                'message' => 'Employee and Document Details Fetched successfully', 
-                'data' => $employeeDetails
-            );
-            echo json_encode($response);
-            die();
+            $result = mysqli_stmt_get_result($stmt);
+            $employeeDetails = mysqli_fetch_assoc($result);
+
+            if ($employeeDetails) {
+                $response = array(
+                    'success' => true,
+                    'message' => 'Employee and Document Details Fetched successfully',
+                    'data' => $employeeDetails
+                );
+                echo json_encode($response);
+                die();
+            } else {
+                $response = array(
+                    'success' => false,
+                    'message' => 'Failed to fetch details'
+                );
+                echo json_encode($response);
+                die();
+            }
         } else {
             $response = array(
-                'success' => false, 
-                'message' => 'Failed to fetch details'
+                'success' => false,
+                'message' => 'There is an error'
             );
             echo json_encode($response);
             die();
         }
-    } else {
-        $response = array(
-            'success' => false, 
-            'message' => 'There is an error'
-        );
-        echo json_encode($response);
-        die();
     }
-}
 
     //Get document details of a employee using doc id
     public function getDocDetails($docId)
@@ -83,6 +83,8 @@ class Employee extends DatabaseConnection
 
     public function getEmployeesName()
     {
+        header('Content-Type: application/json');
+
         $query = "SELECT name FROM employees";
         $stmt = mysqli_prepare($this->conn, $query);
 
@@ -106,6 +108,8 @@ class Employee extends DatabaseConnection
     //GET ALL EMPLOYEE DETAILS
     public function getEmployeesDetails()
     {
+        header('Content-Type: application/json');
+
         $query = "SELECT * FROM employees";
         $stmt = mysqli_prepare($this->conn, $query);
 
@@ -152,6 +156,9 @@ class Employee extends DatabaseConnection
 
     public function updateEmployeeDoc($doc_id, $emp_id, $doc_name, $doc_path, $updated_by)
     {
+
+        header('Content-Type: application/json');
+
         $sql = "UPDATE emp_docs SET emp_id = ?, doc_name = ?, doc_path = ?, updated_by = ? WHERE id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
 
@@ -174,7 +181,7 @@ class Employee extends DatabaseConnection
         }
     }
 
-//UPDATE EMPLOYEE DETAILS USING EMPLOYEE ID
+    //UPDATE EMPLOYEE DETAILS USING EMPLOYEE ID
     public function updateEmployeeDetails($emp_id, $data)
     {
         $name = $data['name'];
@@ -186,8 +193,11 @@ class Employee extends DatabaseConnection
         $phone = $data['phone'];
         $email = $data['email'];
         $password = $data['password'];
-        $status = $data['status']; 
+        $status = $data['status'];
         $featured = $data['featured'];
+
+        header('Content-Type: application/json');
+
         $sql = "UPDATE employees SET name = ?, designation = ?, doj = ?, gender = ?, image = ?, phone = ?, email = ?, password = ?, status = ?, featured = ? WHERE emp_id = ?";
         $stmt = mysqli_prepare($this->conn, $sql);
 
@@ -209,5 +219,4 @@ class Employee extends DatabaseConnection
             die();
         }
     }
-
 }
