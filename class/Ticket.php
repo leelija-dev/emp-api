@@ -12,7 +12,7 @@ class Ticket extends DatabaseConnection
 
         header('Content-Type: application/json');
 
-        $sql = "INSERT INTO ticket (query, priority, status, generated_by) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO tickets (query, priority, status, generated_by) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
 
         if ($stmt) {
@@ -111,5 +111,63 @@ class Ticket extends DatabaseConnection
 
         echo json_encode($response);
         die();
+    }
+
+    public function getAllDetails($ticket_id){
+        header('Content-Type: application/json');
+
+        try {
+          
+              $query = "SELECT tickets.*, ticket_files.file AS ticket_file, ticket_files.added_on AS file_added,  ticket_response.*, ticket_response_files.* 
+              FROM tickets
+              LEFT JOIN ticket_files ON tickets.id = ticket_files.ticket_id
+              LEFT JOIN ticket_response ON tickets.id = ticket_response.ticket_id
+              LEFT JOIN ticket_response_files ON ticket_response.id = ticket_response_files.response_id 
+              WHERE tickets.id = ?";
+
+            $stmt = mysqli_prepare($this->conn, $query);
+
+            if ($stmt) {
+
+                $stmt->bind_param('i', $ticket_id);
+                $stmt->execute();
+
+                $result = mysqli_stmt_get_result($stmt);
+                $ticketDetails = mysqli_fetch_assoc($result);
+
+                if ($ticketDetails) {
+                    $response = array(
+                        'success' => true,
+                        'message' => 'Employee and Document Details Fetched successfully',
+                        'data' => $ticketDetails
+                    );
+                    echo json_encode($response);
+                    die();
+                } else {
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Failed to fetch details'
+                    );
+                    echo json_encode($response);
+                    die();
+                }
+            } else {
+                throw new Exception('Failed to prepare the statement');
+            }
+        } catch (mysqli_sql_exception $e) {
+            // Log error for debugging
+            error_log("Database error: " . $e->getMessage());
+
+            // Return failure response to the user
+            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            echo json_encode($response);
+        } catch (Exception $e) {
+            // Handle any other general exceptions
+            error_log("General error: " . $e->getMessage());
+
+            // Return failure response to the user
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
     }
 }

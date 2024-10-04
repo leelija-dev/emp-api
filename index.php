@@ -1,5 +1,6 @@
 <?php
 require_once 'class/Employee.php';
+require_once 'class/Ticket.php';
 $url = $_SERVER['REQUEST_URI'];
 $url_path = ltrim($url, '/');
 
@@ -166,5 +167,12 @@ if (isset($first_segment)) {
                 echo "Error moving the uploaded file.";
             }
         } 
+    }
+
+    if ($second_segment == 'ticket' && is_numeric($third_segment)) {
+        $id = $third_segment;
+
+        $response = $Ticket->getAllDetails($id);
+        echo $response;
     }
 }
