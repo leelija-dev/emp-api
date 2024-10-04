@@ -219,4 +219,44 @@ class Employee extends DatabaseConnection
             die();
         }
     }
+
+     public function addEmployee($data)
+    {
+
+        $name = $data['name'];
+        $designation = $data['designation'];
+        $doj = $data['doj'];
+        $gender = $data['gender'];
+        $image = $data['image'];
+        $phone = $data['phone'];
+        $email = $data['email'];
+        $password = $data['password'];
+        $status = $data['status'];
+        $featured = $data['featured'];
+        header('Content-Type: application/json');
+        $sql = "INSERT INTO employees (name, designation, doj, gender, image, phone, email, password, status, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if ($stmt){
+            mysqli_stmt_bind_param($stmt, 'ssssssssii', $name, $designation, $doj, $gender, $image, $phone, $email, $password, $status, $featured);
+
+            if (mysqli_stmt_execute($stmt)) {
+
+                $response = array('success' => true, 'message' => 'Employee Added successfully');
+                echo json_encode($response);
+                die();
+            } else {
+                $response = array('success' => false, 'message' => 'Failed to Submit employee');
+                echo json_encode($response);
+                die();
+            }
+        } else {
+            $response = array(
+                'success' => false,
+                'message' => 'There is an error'
+            );
+            echo json_encode($response);
+            die();
+        }
+    }
+
 }
