@@ -168,7 +168,6 @@ if (isset($first_segment)) {
             }
         } 
     }
-
     if ($second_segment == 'ticket' && is_numeric($third_segment)) {
         $id = $third_segment;
 
@@ -176,3 +175,11 @@ if (isset($first_segment)) {
         echo $response;
     }
 }
+    if ($second_segment == 'tickets'  && $third_segment == null && $forth_segment == null) {
+        // $id = $third_segment;
+
+        $response = $Ticket->getTickets();
+        echo $response;
+    }
+
+    

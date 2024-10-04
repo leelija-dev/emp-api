@@ -35,3 +35,14 @@ url - http://localhost/leelija/emp/update/1
 
 function - updateEmployeeDetails()
 
+6)Add employee
+method - post
+url - http://localhost/project_name/emp/add
+
+
+function - addEmployee($data)
+
+here we are adding the data in employee table
+
+
+7)
