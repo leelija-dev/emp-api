@@ -38,7 +38,7 @@ if (isset($first_segment)) {
     //     if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
     //         $doc_name = $_FILES['doc_name']['name'];
     //         $doc_tmp_path = $_FILES['doc_name']['tmp_name'];
-    //         $target_directory = "EmployeeDoc/";
+    //         $target_directory = "public/emp-docs/";
     //         $doc_path = $target_directory . basename($doc_name);
 
     //         if (move_uploaded_file($doc_tmp_path, $doc_path)) {
@@ -70,7 +70,7 @@ if (isset($first_segment)) {
         if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
             $doc_name = $_FILES['doc_name']['name'];
             $doc_tmp_path = $_FILES['doc_name']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
+            $target_directory = "public/emp-docs/";
             $doc_path = $target_directory . basename($doc_name);
 
             if (move_uploaded_file($doc_tmp_path, $doc_path)) {
@@ -106,7 +106,7 @@ if (isset($first_segment)) {
                 $data['image'] = $_FILES['image']['name'];
                 $image = $_FILES['image']['name'];
                 $doc_tmp_path = $_FILES['image']['tmp_name'];
-                $target_directory = "EmployeeDoc/";
+                $target_directory = "public/emp-docs/";
                 $doc_path = $target_directory . basename($image);
 
                 if (move_uploaded_file($doc_tmp_path, $doc_path)) {
@@ -140,7 +140,7 @@ if (isset($first_segment)) {
             $data['image'] = $_FILES['image']['name'];
             $image = $_FILES['image']['name'];
             $doc_tmp_path = $_FILES['image']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
+            $target_directory = "public/emp-docs/";
             $doc_path = $target_directory . basename($image);
 
             if (move_uploaded_file($doc_tmp_path, $doc_path)) {
@@ -164,7 +164,7 @@ if (isset($first_segment)) {
             $data['file'] = $_FILES['file']['name'];
             $file = $_FILES['file']['name'];
             $doc_tmp_path = $_FILES['file']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
+            $target_directory = "public/emp-docs/";
             $doc_path = $target_directory . basename($file);
 
             if (move_uploaded_file($doc_tmp_path, $doc_path)) {
@@ -205,7 +205,7 @@ if (isset($first_segment)) {
             // print_r($data['file']); die();
             $file = $_FILES['file']['name'];
             $doc_tmp_path = $_FILES['file']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
+            $target_directory = "public/emp-docs/";
             $doc_path = $target_directory . basename($file);
 
             if (move_uploaded_file($doc_tmp_path, $doc_path)) {
