@@ -5,6 +5,7 @@ header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 require_once 'class/Employee.php';
+require_once 'class/Ticket.php';
 $url = $_SERVER['REQUEST_URI'];
 $url_path = ltrim($url, '/');
 
@@ -14,6 +15,7 @@ $second_segment = isset($segments[1]) ? $segments[1] : null;
 $third_segment = isset($segments[2]) ? $segments[2] : null;
 $forth_segment = isset($segments[3]) ? $segments[3] : null;
 $Employee = new Employee();
+$Ticket = new Ticket();
 
 if (isset($first_segment)) {
     if ($second_segment == 'employees' && is_numeric($third_segment)) {
@@ -85,33 +87,38 @@ if (isset($first_segment)) {
 
     if ($second_segment == 'emp' && $third_segment == 'update' && is_numeric($forth_segment)) {
         $id = $forth_segment;
-        $data['name'] = $_REQUEST['name'];
-        $data['designation'] = $_REQUEST['designation'];
-        $data['doj'] = $_REQUEST['doj'];
-        $data['gender'] = $_REQUEST['gender'];
-        $data['phone'] = $_REQUEST['phone'];
-        $data['email'] = $_REQUEST['email'];
-        $data['password'] = $_REQUEST['password'];
-        $data['status'] = $_REQUEST['status'];
-        $data['featured'] = $_REQUEST['featured'];
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-            $data['image'] = $_FILES['image']['name'];
-            $image = $_FILES['image']['name'];
-            $doc_tmp_path = $_FILES['image']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
-            $doc_path = $target_directory . basename($image);
+        $exist = $Employee->checkIfEmployeeExists($id);
+        if ($exist == true) {
+            $data['name'] = $_REQUEST['name'];
+            $data['designation'] = $_REQUEST['designation'];
+            $data['doj'] = $_REQUEST['doj'];
+            $data['gender'] = $_REQUEST['gender'];
+            $data['phone'] = $_REQUEST['phone'];
+            $data['email'] = $_REQUEST['email'];
+            $data['password'] = $_REQUEST['password'];
+            $data['status'] = $_REQUEST['status'];
+            $data['featured'] = $_REQUEST['featured'];
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+                $data['image'] = $_FILES['image']['name'];
+                $image = $_FILES['image']['name'];
+                $doc_tmp_path = $_FILES['image']['tmp_name'];
+                $target_directory = "EmployeeDoc/";
+                $doc_path = $target_directory . basename($image);
 
-            if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                    $response = $Employee->updateEmployeeDetails($id, $data);
+                    echo $response;
+                } else {
+                    echo "Error moving the uploaded file.";
+                }
+            } else {
+                $emp = $Employee->getempDetails($id);
+                $data['image'] = $emp['image'];
                 $response = $Employee->updateEmployeeDetails($id, $data);
                 echo $response;
-            } else {
-                echo "Error moving the uploaded file.";
             }
         } else {
-            $emp = $Employee->getempDetails($id);
-            $data['image'] = $emp['image'];
-            $response = $Employee->updateEmployeeDetails($id, $data);
-            echo $response;
+            echo "The Employee Not Found";
         }
     }
 
@@ -138,9 +145,49 @@ if (isset($first_segment)) {
             } else {
                 echo "Error moving the uploaded file.";
             }
-        } 
+        }
     }
-}else {   
+
+    if ($second_segment == 'ticket' && $third_segment == 'add') {
+        $data['query'] = $_REQUEST['query'];
+        $data['priority'] = $_REQUEST['priority'];
+        $data['doj'] = $_REQUEST['doj'];
+        $data['gender'] = $_REQUEST['gender'];
+        $data['phone'] = $_REQUEST['phone'];
+        $data['email'] = $_REQUEST['email'];
+        $data['password'] = $_REQUEST['password'];
+        $data['status'] = $_REQUEST['status'];
+        $data['featured'] = $_REQUEST['featured'];
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+            $data['image'] = $_FILES['image']['name'];
+            $image = $_FILES['image']['name'];
+            $doc_tmp_path = $_FILES['image']['tmp_name'];
+            $target_directory = "EmployeeDoc/";
+            $doc_path = $target_directory . basename($image);
+
+            if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                $response = $Employee->addEmployee($data);
+                echo $response;
+            } else {
+                echo "Error moving the uploaded file.";
+            }
+        }
+    }
+    
+    if ($second_segment == 'ticket' && is_numeric($third_segment)) {
+        $id = $third_segment;
+
+        $response = $Ticket->getAllDetails($id);
+        echo $response;
+    }
+
+    if ($second_segment == 'tickets'  && $third_segment == null && $forth_segment == null) {
+        // $id = $third_segment;
+    
+        $response = $Ticket->getTickets();
+        echo $response;
+    }
+}else {
     header("HTTP/1.1 404 Not Found");
     exit();
 }
