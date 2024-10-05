@@ -137,7 +137,8 @@ class Ticket extends DatabaseConnection
                 $stmt->execute();
 
                 $result = mysqli_stmt_get_result($stmt);
-                $ticketDetails = mysqli_fetch_assoc($result);
+                // $ticketDetails = mysqli_fetch_assoc($result);
+                $ticketDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
                 if ($ticketDetails) {
                     $response = array(

@@ -138,7 +138,6 @@ if (isset($first_segment)) {
             $doc_tmp_path = $_FILES['image']['tmp_name'];
             $target_directory = "EmployeeDoc/";
             $doc_path = $target_directory . basename($image);
-
             if (move_uploaded_file($doc_tmp_path, $doc_path)) {
                 $response = $Employee->addEmployee($data);
                 echo $response;
