@@ -169,43 +169,59 @@ if (isset($first_segment)) {
             } else {
                 echo "Error moving the uploaded file.";
             }
-        } 
-    }
-
-    if ($second_segment == 'ticket' && $third_segment == 'insert') {
-        $data['query'] = $_REQUEST['query'];
-        $data['priority'] = $_REQUEST['priority'];
-        $data['subject'] = $_REQUEST['subject'];
-        $data['emp_id'] = $_REQUEST['emp_id'];
-        $data['generated_by'] = $_REQUEST['generated_by'];
-        $data['status'] = $_REQUEST['status'];
-        if (isset($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
-            $data['file'] = $_FILES['file']['name'];
-            $file = $_FILES['file']['name'];
-            $doc_tmp_path = $_FILES['file']['tmp_name'];
-            $target_directory = "EmployeeDoc/";
-            $doc_path = $target_directory . basename($file);
-
-            if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-                $response = $Ticket->addTickets($data);
-                echo $response;
-            } else {
-                echo "Error moving the uploaded file.";
-            }
         }
     }
+
     if ($second_segment == 'ticket' && is_numeric($third_segment)) {
         $id = $third_segment;
 
         $response = $Ticket->getAllDetails($id);
         echo $response;
     }
-}
+
+    if ($second_segment == 'tickets'  && $third_segment == 'emp' && is_numeric($forth_segment)) {
+        $emp_id = $forth_segment;
+
+        $response = $Ticket->getTicketByEmpId($emp_id);
+        echo $response;
+    }
+
+    if ($second_segment == 'tickets' && $third_segment == null && $forth_segment == null) {
+        $response = $Ticket->getTickets();
+        echo $response;
+    }
+
+    if ($second_segment == 'ticket-response' && $third_segment == 'insert') {
+        $data['ticket_id'] = $_REQUEST['ticket_id'];
+        $data['response'] = $_REQUEST['response'];
+        $data['respond_by'] = $_REQUEST['respond_by'];
+
+        if (isset($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
+            $data['file'] = $_FILES['file']['name'];
+            // print_r($data['file']); die();
+            $file = $_FILES['file']['name'];
+            $doc_tmp_path = $_FILES['file']['tmp_name'];
+            $target_directory = "EmployeeDoc/";
+            $doc_path = $target_directory . basename($file);
+
+            if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                $response = $Ticket->addResponse($data);
+                echo $response;
+            } else {
+                echo "Error moving the uploaded file.";
+            }
+        }
+    }
+
+
+
     if ($second_segment == 'tickets'  && $third_segment == null && $forth_segment == null) {
         // $id = $third_segment;
 
         $response = $Ticket->getTickets();
         echo $response;
     }
-
-    
+} else {
+    header("HTTP/1.1 404 Not Found");
+    exit();
+}
