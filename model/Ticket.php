@@ -1,6 +1,9 @@
 <?php
+
+namespace model;
+
 require_once("config.php");
-class Ticket extends DatabaseConnection
+class Ticket extends \db\DatabaseConnection
 {
     public function addTickets($data)
     {
@@ -157,16 +160,16 @@ class Ticket extends DatabaseConnection
                     die();
                 }
             } else {
-                throw new Exception('Failed to prepare the statement');
+                throw new \Exception('Failed to prepare the statement');
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -203,14 +206,14 @@ class Ticket extends DatabaseConnection
                     die();
                 }
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed get the data due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -248,14 +251,14 @@ class Ticket extends DatabaseConnection
                     die();
                 }
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to get the data due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 

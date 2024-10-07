@@ -1,6 +1,9 @@
 <?php
+namespace model;
 require_once("config.php");
-class Employee extends DatabaseConnection
+
+class Employee extends \db\DatabaseConnection 
+// class Employee extends DatabaseConnection
 {
     //GET EMPLOYEE DETAILS USING EMPLOYEE ID
     public function getEmployeeDetails($id)
@@ -40,16 +43,16 @@ class Employee extends DatabaseConnection
                     die();
                 }
             } else {
-                throw new Exception('Failed to prepare the statement');
+                throw new \Exception('Failed to prepare the statement');
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -123,18 +126,14 @@ class Employee extends DatabaseConnection
                     die();
                 }
             }
-        } catch (mysqli_sql_exception $e) {
-            // Log error for debugging
+        } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
-            // Handle any other general exceptions
+        } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
@@ -163,14 +162,14 @@ class Employee extends DatabaseConnection
                     die();
                 }
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -250,14 +249,14 @@ class Employee extends DatabaseConnection
 
             // Close the statement
             mysqli_stmt_close($stmt);
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -339,14 +338,14 @@ class Employee extends DatabaseConnection
 
             // Close the statement
             mysqli_stmt_close($stmt);
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -428,14 +427,14 @@ class Employee extends DatabaseConnection
 
             // Close the statement
             mysqli_stmt_close($stmt);
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to add employee due to a database error');
             echo json_encode($response);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
@@ -464,12 +463,12 @@ class Employee extends DatabaseConnection
                     return false;
                 }
             } else {
-                throw new Exception('Failed to prepare the statement');
+                throw new \Exception('Failed to prepare the statement');
             }
-        } catch (mysqli_sql_exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
             return false;
         }
