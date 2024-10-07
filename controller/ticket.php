@@ -62,30 +62,27 @@ function handleTicketRequest($method, $segments)
                 echo $response;
             }
             break;
-            case 'ticket-response':
-                if ($method == 'POST' && $third_segment == 'insert') {
-                    $data['ticket_id'] = $_REQUEST['ticket_id'];
-                        $data['response'] = $_REQUEST['response'];
-                        $data['respond_by'] = $_REQUEST['respond_by'];
-                    // print_r($data['ticket_id']);  die();
-                        if (isset($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
-                            $data['file'] = $_FILES['file']['name'];
-                            // print_r($data['file']); die();
-                            $file = $_FILES['file']['name'];
-                            $doc_tmp_path = $_FILES['file']['tmp_name'];
-                            $target_directory = "public/emp-docs/";
-                            $doc_path = $target_directory . basename($file);
-                    
-                            if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-                                // echo "hi"; die();
-                                $response = $Ticket->addResponse($data);
-                                echo $response;
-                            } else {
-                                echo "Error moving the uploaded file.";
-                            }
-                        }
+        case 'ticket-response':
+            if ($method == 'POST' && $third_segment == 'insert') {
+                $data['ticket_id'] = $_REQUEST['ticket_id'];
+                $data['response'] = $_REQUEST['response'];
+                $data['respond_by'] = $_REQUEST['respond_by'];
+                if (isset($_FILES['file']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
+                    $data['file'] = $_FILES['file']['name'];
+                    $file = $_FILES['file']['name'];
+                    $doc_tmp_path = $_FILES['file']['tmp_name'];
+                    $target_directory = "public/emp-docs/";
+                    $doc_path = $target_directory . basename($file);
+
+                    if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                        $response = $Ticket->addResponse($data);
+                        echo $response;
+                    } else {
+                        echo "Error moving the uploaded file.";
+                    }
                 }
-                break;
+            }
+            break;
         default:
             header("HTTP/1.1 404 Not Found");
             echo json_encode(array('success' => false, 'message' => 'Invalid Ticket Route.'));
