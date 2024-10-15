@@ -26,8 +26,12 @@
 // }
 
 use model\Login;
-require 'vendor/autoload.php'; // Load the JWT library
+require 'vendor/autoload.php'; 
 use \Firebase\JWT\JWT;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../'); 
+$dotenv->load();  // Load environment variables from .env file
 
 $Login = new Login();
 
@@ -35,9 +39,8 @@ function handleLoginRequest($method, $segments)
 {
     global $Login;
 
-    // Your JWT secret key (should be kept in a secure place, not hardcoded in production)
-    $key = getenv('JWT_SECRET_KEY');
-
+    // Your JWT secret key (loaded from the .env file)
+    $key = $_ENV['JWT_SECRET'];
     $second_segment = isset($segments[1]) ? $segments[1] : null;
     $third_segment = isset($segments[2]) ? $segments[2] : null;
     $forth_segment = isset($segments[3]) ? $segments[3] : null;
@@ -48,20 +51,18 @@ function handleLoginRequest($method, $segments)
                 $email = $_POST['email'];
                 $password = $_POST['password'];
 
-                // Get user by email and password
                 $result = $Login->getUser($email, $password);
 
                 if ($result) {
-                    // Assuming $result is an associative array with user data
-                    $user_id = $result['id'];
-                    $username = $result['username'];
-
+                    $user_id = $result['emp_id'];
+                    $username = $result['email'];
+                    
                     // Prepare JWT payload
                     $issuedAt = time();
                     $expirationTime = $issuedAt + 3600; // Token valid for 1 hour
 
                     $payload = array(
-                        "iss" => "localhost", // Issuer (your domain or application)
+                        "iss" => "localhost", // Issuer 
                         "iat" => $issuedAt,   // Issued at
                         "exp" => $expirationTime, // Expiration time
                         "data" => array(
@@ -69,15 +70,17 @@ function handleLoginRequest($method, $segments)
                             "username" => $username
                         )
                     );
-
+                  
                     // Generate JWT token
                     $jwt = JWT::encode($payload, $key, 'HS256');
-
+                    
                     // Return response with JWT token
                     echo json_encode([
                         "status" => "success",
-                        "jwt" => $jwt,
-                        "message" => "Login successful"
+                        "token" => $jwt,
+                        "message" => "Login successful",
+                        'data' => $result
+                    
                     ]);
                 } else {
                     // If login fails
@@ -97,5 +100,6 @@ function handleLoginRequest($method, $segments)
             break;
     }
 }
+
 ?>
 

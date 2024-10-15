@@ -15,6 +15,7 @@ function handleEmployeeRequest($method, $segments)
     switch ($second_segment) {
         case 'employees':
             if ($method == 'GET') {
+                 //Fetch list of all employees (name list only)
 
                 if ($third_segment && is_numeric($third_segment)) {
                     // Fetch employee details by ID
@@ -120,6 +121,12 @@ function handleEmployeeRequest($method, $segments)
                     $response = $Employee->updateEmployeeDoc($id, $emp_id, $doc_name, $doc_path, $updated_by);
                     echo $response;
                 }
+            }
+            else if ($third_segment && is_numeric($third_segment)) {
+                // Fetch employee details by ID
+                $id = intval($third_segment);
+                $response = $Employee->getEmployeeDetails($id);
+                echo $response;
             }
             elseif ($method == 'POST' && $third_segment == 'add') {
                 // Add a new employee

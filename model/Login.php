@@ -75,7 +75,7 @@ class Login extends \db\DatabaseConnection
     public function getUser($email, $password)
     {
         header('Content-Type: application/json');
-        try {
+     //   try {
             $query = "SELECT * FROM employees 
               WHERE employees.email = ? AND employees.password = ?";
 
@@ -87,40 +87,41 @@ class Login extends \db\DatabaseConnection
 
                 $result = mysqli_stmt_get_result($stmt);
                 $login = mysqli_fetch_assoc($result);
-                // return $login;
-                if ($login) {
-                    $response = array(
-                        'success' => true,
-                        'message' => 'Login successfull',
-                        'data' => $login
-                    );
-                    echo json_encode($response);
-                    die();
-                } else {
-                    $response = array(
-                        'success' => false,
-                        'message' => 'Invalid Username or Password'
-                    );
-                    echo json_encode($response);
-                    die();
-                }
-            } else {
-                throw new \Exception('Failed to prepare the statement');
-            }
-        } catch (\mysqli_sql_exception $e) {
-            // Log error for debugging
-            error_log("Database error: " . $e->getMessage());
+                 return $login;
+    //             if ($login) {
+    //                 $response = array(
+    //                     'success' => true,
+    //                     'message' => 'Login successfull',
+    //                     'data' => $login
+    //                 );
+    //                 echo json_encode($response);
+    //                 die();
+    //             } else {
+    //                 $response = array(
+    //                     'success' => false,
+    //                     'message' => 'Invalid Username or Password'
+    //                 );
+    //                 echo json_encode($response);
+    //                 die();
+    //             }
+    //         } else {
+    //             throw new \Exception('Failed to prepare the statement');
+    //         }
+    //     } catch (\mysqli_sql_exception $e) {
+    //         // Log error for debugging
+    //         error_log("Database error: " . $e->getMessage());
 
-            // Return failure response to the user
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
-            echo json_encode($response);
-        } catch (\Exception $e) {
-            // Handle any other general exceptions
-            error_log("General error: " . $e->getMessage());
+    //         // Return failure response to the user
+    //         $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+    //         echo json_encode($response);
+    //     } catch (\Exception $e) {
+    //         // Handle any other general exceptions
+    //         error_log("General error: " . $e->getMessage());
 
-            // Return failure response to the user
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
-            echo json_encode($response);
+    //         // Return failure response to the user
+    //         $response = array('success' => false, 'message' => 'An unexpected error occurred');
+    //         echo json_encode($response);
         }
     }
 }
+
