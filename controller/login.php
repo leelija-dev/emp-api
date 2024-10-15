@@ -1,30 +1,4 @@
 <?php
-
-// use model\Login;
-
-// $Login = new Login();
-
-// function handleLoginRequest($method, $segments)
-// {
-//     global $Login;
-// $env = getenv('JWT_SECRET_KEY');
-// // print_r($env);  die();
-//     $second_segment = isset($segments[1]) ? $segments[1] : null;
-//     $third_segment = isset($segments[2]) ? $segments[2] : null;
-//     $forth_segment = isset($segments[3]) ? $segments[3] : null;
-//     // print_r($second_segment);  die();
-//     switch ($second_segment) {
-//         case 'login':
-//             if ($method == 'POST' && $third_segment == null && $forth_segment == null) {
-//                 $email = $_POST['email'];
-//                 $password = $_POST['password'];
-//                 $result = $Login->getUser($email, $password);
-//                 if ($result) {
-//                 }
-//             }
-//     }
-// }
-
 use model\Login;
 require 'vendor/autoload.php'; 
 use \Firebase\JWT\JWT;
