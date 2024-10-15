@@ -15,7 +15,8 @@ function handleEmployeeRequest($method, $segments)
     switch ($second_segment) {
         case 'employees':
             if ($method == 'GET') {
-                 //Fetch list of all employees (name list only)
+                //Fetch list of all employees (name list only)
+
 
                 if ($third_segment && is_numeric($third_segment)) {
                     // Fetch employee details by ID
@@ -27,30 +28,8 @@ function handleEmployeeRequest($method, $segments)
                     $response = $Employee->getEmployeesName();
                     echo $response;
                 }
-            } 
-            // elseif ($method == 'PUT' && $third_segment == 'update' && is_numeric($forth_segment)) {
-            //     // Update employee details by ID
-            //     parse_str(file_get_contents("php://input"), $put_vars);
-            //     $id = intval($forth_segment);
-            //     $exist = $Employee->checkIfEmployeeExists($id);
-            //     if ($exist) {
-            //         $data = array(
-            //             'name' => $put_vars['name'],
-            //             'designation' => $put_vars['designation'],
-            //             'doj' => $put_vars['doj'],
-            //             'gender' => $put_vars['gender'],
-            //             'phone' => $put_vars['phone'],
-            //             'email' => $put_vars['email'],
-            //             'password' => $put_vars['password'],
-            //             'status' => $put_vars['status'],
-            //             'featured' => $put_vars['featured'],
-            //         );
-            //         $response = $Employee->updateEmployeeDetails($id, $data);
-            //         echo $response;
-            //     } else {
-            //         echo json_encode(array('success' => false, 'message' => 'Employee not found.'));
-            //     }
-            // }
+            }
+           
             break;
 
         case 'employee-details':
@@ -121,14 +100,12 @@ function handleEmployeeRequest($method, $segments)
                     $response = $Employee->updateEmployeeDoc($id, $emp_id, $doc_name, $doc_path, $updated_by);
                     echo $response;
                 }
-            }
-            else if ($third_segment && is_numeric($third_segment)) {
+            } else if ($third_segment && is_numeric($third_segment)) {
                 // Fetch employee details by ID
                 $id = intval($third_segment);
                 $response = $Employee->getEmployeeDetails($id);
                 echo $response;
-            }
-            elseif ($method == 'POST' && $third_segment == 'add') {
+            } elseif ($method == 'POST' && $third_segment == 'add') {
                 // Add a new employee
                 $data = array(
                     'name' => $_POST['name'],
@@ -152,6 +129,26 @@ function handleEmployeeRequest($method, $segments)
                         echo $response;
                     } else {
                         echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
+                    }
+                }
+            } elseif ($method == 'POST' && $third_segment == 'add-doc') {
+                // Add a new employee do
+
+                // $doc_name = $_REQUEST['doc_name'];
+                $updated_by = $_REQUEST['updated_by'];
+                $emp_id = $_REQUEST['emp_id'];
+
+
+                if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
+                    $doc_name = $_FILES['doc_name']['name'];
+                    $doc_tmp_path = $_FILES['doc_name']['tmp_name'];
+                    $target_directory = "public/emp-docs/";
+                    $doc_path = $target_directory . basename($doc_name);
+                    if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+                        $response = $Employee->addEmployeeDoc($emp_id, $doc_name, $doc_path, $updated_by);
+                        echo $response;
+                    } else {
+                        echo "Error moving the uploaded file.";
                     }
                 }
             }

@@ -17,7 +17,7 @@ class Employee extends \db\DatabaseConnection
               FROM employees 
               LEFT JOIN emp_docs ON employees.emp_id = emp_docs.emp_id 
               WHERE employees.emp_id = ?";
-              
+
             $stmt = mysqli_prepare($this->conn, $query);
 
             if ($stmt) {
@@ -27,8 +27,6 @@ class Employee extends \db\DatabaseConnection
 
                 $result = mysqli_stmt_get_result($stmt);
                 $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
-                // print_r($employeeDetails);
-                // die();
                 if ($employeeDetails) {
                     $response = array(
                         'success' => true,
@@ -63,14 +61,7 @@ class Employee extends \db\DatabaseConnection
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
-        // else {
-        //     $response = array(
-        //         'success' => false,
-        //         'message' => 'There is an error'
-        //     );
-        //     echo json_encode($response);
-        //     die();
-        // }
+       
     }
    
     
@@ -185,26 +176,35 @@ class Employee extends \db\DatabaseConnection
     }
 
 
-    // public function addEmployeeDoc($id, $doc_name, $doc_path, $updated_by)
-    // {
+    public function addEmployeeDoc($id, $doc_name, $doc_path, $updated_by)
+    {
+        $doc_name = htmlspecialchars(trim($doc_name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $doc_path = htmlspecialchars(trim($doc_path), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
 
-    //     $sql = "INSERT INTO emp_docs (emp_id, doc_name, doc_path, updated_by) VALUES (?, ?, ?, ?)";
-    //     $stmt = mysqli_prepare($this->conn, $sql);
-    //     if ($stmt){
-    //         mysqli_stmt_bind_param($stmt, 'isss', $id, $doc_name, $doc_path, $updated_by);
+        // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+        $doc_name = filter_var($doc_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $doc_path = filter_var($doc_path, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $updated_by = filter_var($updated_by, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    //         if (mysqli_stmt_execute($stmt)) {
 
-    //             $response = array('success' => true, 'message' => 'Employee Documents Submitted successfully');
-    //             echo json_encode($response);
-    //             die();
-    //         } else {
-    //             $response = array('success' => false, 'message' => 'Failed to Submit documents');
-    //             echo json_encode($response);
-    //             die();
-    //         }
-    //     }
-    // }
+        $sql = "INSERT INTO emp_docs (emp_id, doc_name, doc_path, updated_by) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if ($stmt){
+            mysqli_stmt_bind_param($stmt, 'isss', $id, $doc_name, $doc_path, $updated_by);
+
+            if (mysqli_stmt_execute($stmt)) {
+
+                $response = array('success' => true, 'message' => 'Employee Documents Submitted successfully');
+                echo json_encode($response);
+                die();
+            } else {
+                $response = array('success' => false, 'message' => 'Failed to Submit documents');
+                echo json_encode($response);
+                die();
+            }
+        }
+    }
 
     //UPDATE EMPLOYEE DOC USING DOC_ID
 
