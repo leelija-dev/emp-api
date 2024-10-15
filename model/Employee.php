@@ -1,8 +1,10 @@
 <?php
+
 namespace model;
+
 require_once("config.php");
 
-class Employee extends \db\DatabaseConnection 
+class Employee extends \db\DatabaseConnection
 // class Employee extends DatabaseConnection
 {
     //GET EMPLOYEE DETAILS USING EMPLOYEE ID
@@ -11,11 +13,11 @@ class Employee extends \db\DatabaseConnection
         header('Content-Type: application/json');
 
         try {
-            $query = "SELECT employees.*, emp_docs.* 
+            $query = "SELECT employees.*, emp_docs.doc_name, emp_docs.doc_path, emp_docs.updated_by
               FROM employees 
               LEFT JOIN emp_docs ON employees.emp_id = emp_docs.emp_id 
               WHERE employees.emp_id = ?";
-
+              
             $stmt = mysqli_prepare($this->conn, $query);
 
             if ($stmt) {
@@ -24,8 +26,9 @@ class Employee extends \db\DatabaseConnection
                 $stmt->execute();
 
                 $result = mysqli_stmt_get_result($stmt);
-                $employeeDetails = mysqli_fetch_assoc($result);
-
+                $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                // print_r($employeeDetails);
+                // die();
                 if ($employeeDetails) {
                     $response = array(
                         'success' => true,
@@ -69,6 +72,8 @@ class Employee extends \db\DatabaseConnection
         //     die();
         // }
     }
+   
+    
 
     //Get document details of a employee using doc id
     public function getDocDetails($docId)
@@ -201,7 +206,7 @@ class Employee extends \db\DatabaseConnection
     //     }
     // }
 
-//UPDATE EMPLOYEE DOC USING DOC_ID
+    //UPDATE EMPLOYEE DOC USING DOC_ID
 
     public function updateEmployeeDoc($doc_id, $emp_id, $doc_name, $doc_path, $updated_by)
     {
@@ -309,8 +314,10 @@ class Employee extends \db\DatabaseConnection
 
 
         // Ensure sanitized strings are not empty
-        if (empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($phone) || empty($email)
-            || empty($password) || empty($status) || empty($featured)){
+        if (
+            empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($phone) || empty($email)
+            || empty($password) || empty($status) || empty($featured)
+        ) {
             $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
             echo json_encode($response);
             return;
@@ -329,7 +336,7 @@ class Employee extends \db\DatabaseConnection
             // Bind the parameters to the prepared statement
             mysqli_stmt_bind_param($stmt, 'ssssssssiii', $name, $designation, $doj, $gender, $image, $phone, $email, $password, $status, $featured, $emp_id);
             // Execute the prepared statement
-           
+
             if (mysqli_stmt_execute($stmt)) {
                 // Success response
                 $response = array('success' => true, 'message' => 'Employee updated successfully');
@@ -449,14 +456,14 @@ class Employee extends \db\DatabaseConnection
         try {
             $query = "SELECT emp_id FROM employees WHERE emp_id = ? LIMIT 1";
             $stmt = mysqli_prepare($this->conn, $query);
-    
+
             if ($stmt) {
                 $stmt->bind_param('s', $id);
                 $stmt->execute();
-    
+
                 $result = mysqli_stmt_get_result($stmt);
                 $row = mysqli_fetch_assoc($result);
-    
+
                 if ($row) {
                     return true;
                 } else {
@@ -473,5 +480,4 @@ class Employee extends \db\DatabaseConnection
             return false;
         }
     }
-    
 }

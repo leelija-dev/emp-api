@@ -36,7 +36,7 @@ function handleLoginRequest($method, $segments)
                     $expirationTime = $issuedAt + 3600; // Token valid for 1 hour
 
                     $payload = array(
-                        "iss" => "localhost", // Issuer 
+                        "iss" => "localhost",
                         "iat" => $issuedAt,   // Issued at
                         "exp" => $expirationTime, // Expiration time
                         "data" => array(
