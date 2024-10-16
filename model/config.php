@@ -1,7 +1,7 @@
 <?php
 namespace db;
 
-use mysqli; // Ensure mysqli is properly imported within the namespace
+use mysqli; 
 
 class DatabaseConnection {
 

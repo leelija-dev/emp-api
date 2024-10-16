@@ -69,7 +69,7 @@ class Ticket extends \db\DatabaseConnection
         $response = $data['response'];
         $respond_by = $data['respond_by'];
         $file = $data['file'];
-        // print_r($file);  die();
+       
 
         header('Content-Type: application/json');
 
@@ -163,17 +163,15 @@ class Ticket extends \db\DatabaseConnection
                 throw new \Exception('Failed to prepare the statement');
             }
         } catch (\mysqli_sql_exception $e) {
-            // Log error for debugging
+    
             error_log("Database error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
         } catch (\Exception $e) {
-            // Handle any other general exceptions
+            
             error_log("General error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
@@ -207,17 +205,12 @@ class Ticket extends \db\DatabaseConnection
                 }
             }
         } catch (\mysqli_sql_exception $e) {
-            // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed get the data due to a database error');
             echo json_encode($response);
         } catch (\Exception $e) {
-            // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
-
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
@@ -252,17 +245,13 @@ class Ticket extends \db\DatabaseConnection
                 }
             }
         } catch (\mysqli_sql_exception $e) {
-            // Log error for debugging
             error_log("Database error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'Failed to get the data due to a database error');
             echo json_encode($response);
         } catch (\Exception $e) {
-            // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
-            // Return failure response to the user
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
