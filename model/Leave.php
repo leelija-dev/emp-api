@@ -245,5 +245,54 @@ class Leave extends \db\DatabaseConnection
         }
     }
 
-}
+    public function getRequestWithResponse($request_id)
+    {
+        header('Content-Type: application/json');
 
+        try {
+            $query = "SELECT leave_requests.*, leave_allocated.*
+              FROM leave_requests 
+              LEFT JOIN leave_allocated ON leave_requests.id = leave_allocated.request_id 
+              WHERE leave_requests.id = ?";
+
+            $stmt = mysqli_prepare($this->conn, $query);
+
+            if ($stmt) {
+
+                $stmt->bind_param('i', $request_id);
+                $stmt->execute();
+
+                $result = mysqli_stmt_get_result($stmt);
+                $leaveDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+                if ($leaveDetails) {
+                    $response = array(
+                        'success' => true,
+                        'message' => 'Leave Request and Response Details Fetched successfully',
+                        'data' => $leaveDetails
+                    );
+                    echo json_encode($response);
+                    die();
+                } else {
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Failed to fetch details'
+                    );
+                    echo json_encode($response);
+                    die();
+                }
+            } else {
+                throw new \Exception('Failed to prepare the statement');
+            }
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
+}

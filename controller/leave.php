@@ -27,7 +27,6 @@ function handleLeaveRequest($method, $segments)
                     'start_date' => $_POST['start_date'],
                     'end_date' => $_POST['end_date'],
                     'status' => $_POST['status']
-                    // 'request_time' => $_POST['request_time'],
                 );
                 $response = $Leave->addRequest($data);
                 echo $response;
@@ -40,15 +39,19 @@ function handleLeaveRequest($method, $segments)
                 );
                 $response = $Leave->addResponse($data);
                 echo $response;
-            }
-            else if ($method == 'GET' && $third_segment == 'response' && is_numeric($forth_segment)) {
+            } else if ($method == 'GET' && $third_segment == 'response' && is_numeric($forth_segment)) {
                 $id  = $forth_segment;
                 $response = $Leave->getResponseByReqId($id);
                 echo $response;
-            }
-            else if ($method == 'GET' && $third_segment == 'request' && is_numeric($forth_segment)) {
+            } else if ($method == 'GET' && $third_segment == 'request' && is_numeric($forth_segment)) {
                 $id  = $forth_segment;
                 $response = $Leave->getRequestByEmpId($id);
+                echo $response;
+            }
+
+            else if ($method == 'GET' && $third_segment == 'details' && is_numeric($forth_segment)) {
+                $id  = $forth_segment;
+                $response = $Leave->getRequestWithResponse($id);
                 echo $response;
             }
             break;
