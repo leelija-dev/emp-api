@@ -47,7 +47,7 @@ class Employee extends \db\DatabaseConnection
                 throw new \Exception('Failed to prepare the statement');
             }
         } catch (\mysqli_sql_exception $e) {
-         
+
             error_log("Database error: " . $e->getMessage());
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
             echo json_encode($response);
@@ -56,10 +56,9 @@ class Employee extends \db\DatabaseConnection
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
-       
     }
-   
-    
+
+
 
     //Get document details of a employee using doc id
     public function getDocDetails($docId)
@@ -185,7 +184,7 @@ class Employee extends \db\DatabaseConnection
 
         $sql = "INSERT INTO emp_docs (emp_id, doc_name, doc_path, updated_by) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
-        if ($stmt){
+        if ($stmt) {
             mysqli_stmt_bind_param($stmt, 'isss', $id, $doc_name, $doc_path, $updated_by);
 
             if (mysqli_stmt_execute($stmt)) {
@@ -205,58 +204,72 @@ class Employee extends \db\DatabaseConnection
 
     public function updateEmployeeDoc($doc_id, $emp_id, $doc_name, $doc_path, $updated_by)
     {
-       
+
         header('Content-Type: application/json');
+        $query = "SELECT * FROM emp_docs WHERE id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $query);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $doc_id);
+            $stmt->execute();
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            // print_r($row);
+            // die();
+            if ($row) {
+                // Sanitize strings to avoid unnecessary characters or malicious input
+                $doc_name = htmlspecialchars(trim($doc_name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                $doc_path = htmlspecialchars(trim($doc_path), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+                // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+                $doc_name = filter_var($doc_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $doc_path = filter_var($doc_path, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $updated_by = filter_var($updated_by, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 
-        // Sanitize strings to avoid unnecessary characters or malicious input
-        $doc_name = htmlspecialchars(trim($doc_name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        $doc_path = htmlspecialchars(trim($doc_path), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
 
-        // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
-        $doc_name = filter_var($doc_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $doc_path = filter_var($doc_path, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $updated_by = filter_var($updated_by, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                if (empty($doc_name) || empty($doc_path) || empty($updated_by)) {
+                    $response = array('success' => false, 'message' => 'Document Name, Path, or Updated By is invalid');
+                    echo json_encode($response);
+                    return;
+                }
 
 
-      
-        if (empty($doc_name) || empty($doc_path) || empty($updated_by)) {
-            $response = array('success' => false, 'message' => 'Document Name, Path, or Updated By is invalid');
-            echo json_encode($response);
-            return;
-        }
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-        
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+                try {
 
-        try {
-           
-            $sql = "UPDATE emp_docs SET emp_id = ?, doc_name = ?, doc_path = ?, updated_by = ? WHERE id = ?";
+                    $sql = "UPDATE emp_docs SET emp_id = ?, doc_name = ?, doc_path = ?, updated_by = ? WHERE id = ?";
 
-            $stmt = mysqli_prepare($this->conn, $sql);
+                    $stmt = mysqli_prepare($this->conn, $sql);
 
-           
-            mysqli_stmt_bind_param($stmt, 'isssi', $emp_id, $doc_name, $doc_path, $updated_by, $doc_id);
 
-            if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Employee Document updated successfully');
+                    mysqli_stmt_bind_param($stmt, 'isssi', $emp_id, $doc_name, $doc_path, $updated_by, $doc_id);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $response = array('success' => true, 'message' => 'Employee Document updated successfully');
+                        echo json_encode($response);
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } catch (\mysqli_sql_exception $e) {
+                    error_log("Database error: " . $e->getMessage());
+
+                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    echo json_encode($response);
+                } catch (\Exception $e) {
+                    error_log("General error: " . $e->getMessage());
+                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    echo json_encode($response);
+                }
+            } else {
+                $response = array('success' => false, 'message' => 'Document id not found');
                 echo json_encode($response);
             }
-
-            mysqli_stmt_close($stmt);
-        } catch (\mysqli_sql_exception $e) {
-            error_log("Database error: " . $e->getMessage());
-
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
-            echo json_encode($response);
-        } catch (\Exception $e) {
-            error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
-            echo json_encode($response);
         }
     }
-
     //UPDATE EMPLOYEE DETAILS USING EMPLOYEE ID
     public function updateEmployeeDetails($emp_id, $data)
     {
@@ -308,29 +321,29 @@ class Employee extends \db\DatabaseConnection
             return;
         }
 
-    
+
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-          
+
             $sql = "UPDATE employees SET name = ?, designation = ?, doj = ?, gender = ?, image = ?, phone = ?, email = ?, password = ?, status = ?, featured = ? WHERE emp_id = ?";
 
-            
+
             $stmt = mysqli_prepare($this->conn, $sql);
 
-           
+
             mysqli_stmt_bind_param($stmt, 'ssssssssiii', $name, $designation, $doj, $gender, $image, $phone, $email, $password, $status, $featured, $emp_id);
-          
+
 
             if (mysqli_stmt_execute($stmt)) {
                 $response = array('success' => true, 'message' => 'Employee updated successfully');
                 echo json_encode($response);
             }
 
-           
+
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
-            
+
             error_log("Database error: " . $e->getMessage());
 
             $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
@@ -357,7 +370,7 @@ class Employee extends \db\DatabaseConnection
         $status = $data['status'];
         $featured = $data['featured'];
 
-       
+
         $name = htmlspecialchars(trim($name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $designation = htmlspecialchars(trim($designation), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $doj = htmlspecialchars(trim($doj), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
@@ -414,7 +427,7 @@ class Employee extends \db\DatabaseConnection
             // Close the statement
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
-          
+
             error_log("Database error: " . $e->getMessage());
 
             $response = array('success' => false, 'message' => 'Failed to add employee due to a database error');
@@ -422,7 +435,7 @@ class Employee extends \db\DatabaseConnection
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-           
+
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }

@@ -19,6 +19,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 require_once 'model/Employee.php';
 require_once 'model/Ticket.php';
 require_once 'model/Login.php';
+require_once 'model/Leave.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $url = $_SERVER['REQUEST_URI'];
@@ -57,6 +58,10 @@ switch ($second_segment) {
     case 'login':
         require_once 'controller/login.php';
         handleLoginRequest($method, $segments);
+        break;
+    case 'leave':
+        require_once 'controller/leave.php';
+        handleLeaveRequest($method, $segments);
         break;
     default:
         header("HTTP/1.1 404 Not Found");
