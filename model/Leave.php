@@ -5,7 +5,7 @@ namespace model;
 require_once("config.php");
 
 class Leave extends \db\DatabaseConnection
-// class Login extends DatabaseConnection
+
 {
 
     public function addRequest($data)
@@ -49,26 +49,24 @@ class Leave extends \db\DatabaseConnection
             return;
         }
 
-        // Set MySQLi to throw exceptions for errors
+       
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            // SQL query with placeholders
+          
             $sql = "INSERT INTO leave_requests (emp_id, type, duration, request_to, start_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            // Prepare the SQL statement
             $stmt = mysqli_prepare($this->conn, $sql);
 
-            // Bind the parameters to the prepared statement
             mysqli_stmt_bind_param($stmt, 'issssss', $emp_id, $type, $duration, $request_to, $start_date, $end_date, $status);
-            // Execute the prepared statement
+           
             if (mysqli_stmt_execute($stmt)) {
-                // Success response
+            
                 $response = array('success' => true, 'message' => 'Leave request added successfully');
                 echo json_encode($response);
             }
 
-            // Close the statement
+          
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
 
@@ -116,7 +114,7 @@ class Leave extends \db\DatabaseConnection
             return;
         }
 
-        // Set MySQLi to throw exceptions for errors
+        
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
@@ -128,12 +126,11 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 'isss', $request_id, $status, $updated_by, $allocated_time);
 
             if (mysqli_stmt_execute($stmt)) {
-                // Success response
                 $response = array('success' => true, 'message' => 'Response added successfully');
                 echo json_encode($response);
             }
 
-            // Close the statement
+            
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
 
