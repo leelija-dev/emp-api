@@ -421,4 +421,107 @@ class Leave extends \db\DatabaseConnection
             }
         }
     }
+
+    public function addType($name)
+    {
+        header('Content-Type: application/json');
+        
+
+        $name = htmlspecialchars(trim($name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+        // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+        $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        // Ensure sanitized strings are not empty
+        if (
+            empty($name)
+        ) {
+            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            echo json_encode($response);
+            return;
+        }
+
+        
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            $sql = "INSERT INTO leave_types (name) VALUES (?)";
+            
+            $stmt = mysqli_prepare($this->conn, $sql);
+
+    
+            mysqli_stmt_bind_param($stmt, 's', $name);
+
+            if (mysqli_stmt_execute($stmt)) {
+                $response = array('success' => true, 'message' => 'Leave Type added successfully');
+                echo json_encode($response);
+            }
+
+            
+            mysqli_stmt_close($stmt);
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+
+            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+
+
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
+
+    public function updateType($id, $name)
+    {
+        header('Content-Type: application/json');
+        
+
+        $name = htmlspecialchars(trim($name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+        // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+        $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        // Ensure sanitized strings are not empty
+        if (
+            empty($name)
+        ) {
+            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            echo json_encode($response);
+            return;
+        }
+
+        
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            // $sql = "INSERT INTO leave_types (name) VALUES (?)";
+            $sql = "UPDATE leave_types SET name = ? WHERE id = ?";
+            
+            $stmt = mysqli_prepare($this->conn, $sql);
+
+    
+            mysqli_stmt_bind_param($stmt, 'si', $name, $id);
+
+            if (mysqli_stmt_execute($stmt)) {
+                $response = array('success' => true, 'message' => 'Leave Type updated successfully');
+                echo json_encode($response);
+            }
+
+            
+            mysqli_stmt_close($stmt);
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+
+            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+
+
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
 }

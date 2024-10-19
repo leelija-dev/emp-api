@@ -15,6 +15,7 @@ function handleLeaveRequest($method, $segments)
     $second_segment = isset($segments[1]) ? $segments[1] : null;
     $third_segment = isset($segments[2]) ? $segments[2] : null;
     $forth_segment = isset($segments[3]) ? $segments[3] : null;
+    $fifth_segment = isset($segments[4]) ? $segments[4] : null;
 
     switch ($second_segment) {
         case 'leave':
@@ -71,6 +72,20 @@ function handleLeaveRequest($method, $segments)
                     $status = $_POST['status'];
 
                 $response = $Leave->updateRequestStatus($id , $status);
+                echo $response;
+            }
+            else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'add') {
+             
+                $name =  $_POST['name'];
+                  
+                $response = $Leave->addType($name);
+                echo $response;
+            }
+            else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'update' && is_numeric($fifth_segment)) {
+             $id = $fifth_segment;
+                $name =  $_POST['name'];
+                  
+                $response = $Leave->updateType($id, $name);
                 echo $response;
             }
             break;
