@@ -295,4 +295,135 @@ class Leave extends \db\DatabaseConnection
             echo json_encode($response);
         }
     }
+
+    public function updateLeaveResponse($id, $data)
+    {
+
+        header('Content-Type: application/json');
+        $query = "SELECT * FROM leave_allocated WHERE id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $query);
+        $request_id = $data['request_id'];
+        $status = $data['status'];
+        $updated_by = $data['updated_by'];
+        $allocated_time = $data['allocated_time'];
+        if ($stmt) {
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            
+            if ($row) {
+                // Sanitize strings to avoid unnecessary characters or malicious input
+                $request_id = htmlspecialchars(trim($request_id), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                $allocated_time = htmlspecialchars(trim($allocated_time), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+                // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+                $request_id = filter_var($request_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $updated_by = filter_var($updated_by, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $allocated_time = filter_var($allocated_time, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+                if (empty($request_id) || empty($status) || empty($updated_by) || empty($allocated_time)) {
+                    $response = array('success' => false, 'message' => 'Input field may be invalid');
+                    echo json_encode($response);
+                    return;
+                }
+
+
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+                try {
+
+                    $sql = "UPDATE leave_allocated SET request_id = ?, status = ?, updated_by = ?, allocated_time = ? WHERE id = ?";
+
+                    $stmt = mysqli_prepare($this->conn, $sql);
+
+
+                    mysqli_stmt_bind_param($stmt, 'isssi', $request_id, $status, $updated_by, $allocated_time, $id);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $response = array('success' => true, 'message' => 'Leave Response updated successfully');
+                        echo json_encode($response);
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } catch (\mysqli_sql_exception $e) {
+                    error_log("Database error: " . $e->getMessage());
+
+                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    echo json_encode($response);
+                } catch (\Exception $e) {
+                    error_log("General error: " . $e->getMessage());
+                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    echo json_encode($response);
+                }
+            } else {
+                $response = array('success' => false, 'message' => 'Document id not found');
+                echo json_encode($response);
+            }
+        }
+    }
+
+    public function updateRequestStatus($id, $status)
+    {
+
+        header('Content-Type: application/json');
+        $query = "SELECT * FROM leave_requests WHERE id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $query);
+
+        if ($stmt) {
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+            
+            if ($row) {
+                $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+           
+                $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+                if (empty($status)) {
+                    $response = array('success' => false, 'message' => 'Input field may be invalid');
+                    echo json_encode($response);
+                    return;
+                }
+
+
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+                try {
+
+                    $sql = "UPDATE leave_requests SET status = ? WHERE id = ?";
+
+                    $stmt = mysqli_prepare($this->conn, $sql);
+
+
+                    mysqli_stmt_bind_param($stmt, 'si', $status, $id);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $response = array('success' => true, 'message' => 'Request Status updated successfully');
+                        echo json_encode($response);
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } catch (\mysqli_sql_exception $e) {
+                    error_log("Database error: " . $e->getMessage());
+
+                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    echo json_encode($response);
+                } catch (\Exception $e) {
+                    error_log("General error: " . $e->getMessage());
+                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    echo json_encode($response);
+                }
+            } else {
+                $response = array('success' => false, 'message' => 'Document id not found');
+                echo json_encode($response);
+            }
+        }
+    }
 }
