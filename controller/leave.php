@@ -54,6 +54,25 @@ function handleLeaveRequest($method, $segments)
                 $response = $Leave->getRequestWithResponse($id);
                 echo $response;
             }
+            else if ($method == 'POST' && $third_segment == 'updateResponse' && is_numeric($forth_segment)) {
+                $id = $forth_segment;
+                $data = array(
+                    'request_id' => $_POST['request_id'],
+                    'status' => $_POST['status'],
+                    'updated_by' => $_POST['updated_by'],
+                    'allocated_time' => $_POST['allocated_time']
+                );
+                $response = $Leave->updateLeaveResponse($id , $data);
+                echo $response;
+            }
+            else if ($method == 'POST' && $third_segment == 'updateRequestStatus' && is_numeric($forth_segment)) {
+                $id = $forth_segment;
+                
+                    $status = $_POST['status'];
+
+                $response = $Leave->updateRequestStatus($id , $status);
+                echo $response;
+            }
             break;
 
 
