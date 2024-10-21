@@ -528,4 +528,243 @@ class Leave extends \db\DatabaseConnection
             echo json_encode($response);
         }
     }
+
+    public function addLeaveDetails($data)
+    {
+        header('Content-Type: application/json');
+        $type = $data['type'];
+        $duration = $data['duration'];
+
+        $type = htmlspecialchars(trim($type), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $duration = htmlspecialchars(trim($duration), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+        $type = filter_var($type, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $duration = filter_var($duration, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if (
+            empty($type) ||  empty($duration) 
+        ) {
+            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            echo json_encode($response);
+            return;
+        }
+
+        
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            $sql = "INSERT INTO leave_details (type, duration) VALUES (?, ?)";
+            
+            $stmt = mysqli_prepare($this->conn, $sql);
+
+    
+            mysqli_stmt_bind_param($stmt, 'ss', $type, $duration);
+
+            if (mysqli_stmt_execute($stmt)) {
+                $response = array('success' => true, 'message' => 'Leave Details added successfully');
+                echo json_encode($response);
+            }
+
+            
+            mysqli_stmt_close($stmt);
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+
+            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+
+
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
+
+    public function updateTypeDetails($id, $data)
+    {
+        header('Content-Type: application/json');
+        
+
+        $type = htmlspecialchars(trim($data['type']), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $duration = htmlspecialchars(trim($data['duration']), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+        $type = filter_var($type, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $duration = filter_var($duration, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if (
+            empty($type) || empty($duration)
+        ) {
+            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            echo json_encode($response);
+            return;
+        }
+
+        
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            $sql = "UPDATE leave_details SET type = ?, duration = ? WHERE id = ?";
+            
+            $stmt = mysqli_prepare($this->conn, $sql);
+
+            mysqli_stmt_bind_param($stmt, 'ssi', $type, $duration, $id);
+
+            if (mysqli_stmt_execute($stmt)) {
+                $response = array('success' => true, 'message' => 'Details of Leave Type updated successfully');
+                echo json_encode($response);
+            }
+
+            
+            mysqli_stmt_close($stmt);
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+
+            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+
+
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
+
+    // public function deleteType($id)
+    // {
+    //     header('Content-Type: application/json');
+
+    //     try {
+    //         $sql = "DELETE FROM leave_types WHERE id = ?";
+            
+    //         $stmt = mysqli_prepare($this->conn, $sql);
+
+    //         mysqli_stmt_bind_param($stmt, 'i', $id);
+
+    //         if (mysqli_stmt_execute($stmt)) {
+    //             $response = array('success' => true, 'message' => 'Leave Type deleted successfully');
+    //             echo json_encode($response);
+    //         }
+
+            
+    //         mysqli_stmt_close($stmt);
+    //     } catch (\mysqli_sql_exception $e) {
+
+    //         error_log("Database error: " . $e->getMessage());
+
+    //         $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+    //         echo json_encode($response);
+    //     } catch (\Exception $e) {
+    //         error_log("General error: " . $e->getMessage());
+
+
+    //         $response = array('success' => false, 'message' => 'An unexpected error occurred');
+    //         echo json_encode($response);
+    //     }
+    // }
+
+    public function deleteType($id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        // Check if the record is referenced by foreign keys before deleting
+        $checkForeignKeySQL = "SELECT COUNT(*) AS count FROM leave_details WHERE type = ?";
+        $stmt = mysqli_prepare($this->conn, $checkForeignKeySQL);
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row['count'] > 0) {
+            // If the record is referenced, do not allow deletion
+            $response = array('success' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
+            echo json_encode($response);
+            return; // Exit early
+        }
+        mysqli_stmt_close($stmt); // Close the previous statement
+
+        // Now proceed to delete the record
+        $deleteSQL = "DELETE FROM leave_types WHERE id = ?";
+        $stmt = mysqli_prepare($this->conn, $deleteSQL);
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+
+        if (mysqli_stmt_execute($stmt)) {
+            $response = array('success' => true, 'message' => 'Leave Type deleted successfully.');
+            echo json_encode($response);
+        } else {
+            // Handle failure case for the DELETE statement
+            $response = array('success' => false, 'message' => 'Failed to delete the Leave Type.');
+            echo json_encode($response);
+        }
+
+        mysqli_stmt_close($stmt); // Always close the statement
+
+    } catch (\mysqli_sql_exception $e) {
+        error_log("Database error: " . $e->getMessage());
+        $response = array('success' => false, 'message' => 'Failed to delete due to a database error.');
+        echo json_encode($response);
+
+    } catch (\Exception $e) {
+        error_log("General error: " . $e->getMessage());
+        $response = array('success' => false, 'message' => 'An unexpected error occurred.');
+        echo json_encode($response);
+    }
+}
+
+public function deleteTypeDetails($id)
+{
+    header('Content-Type: application/json');
+
+    try {
+        // // Check if the record is referenced by foreign keys before deleting
+        // $checkForeignKeySQL = "SELECT COUNT(*) AS count FROM leave_details WHERE type = ?";
+        // $stmt = mysqli_prepare($this->conn, $checkForeignKeySQL);
+        // mysqli_stmt_bind_param($stmt, 'i', $id);
+        // mysqli_stmt_execute($stmt);
+        // $result = mysqli_stmt_get_result($stmt);
+        // $row = mysqli_fetch_assoc($result);
+
+        // if ($row['count'] > 0) {
+        //     // If the record is referenced, do not allow deletion
+        //     $response = array('success' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
+        //     echo json_encode($response);
+        //     return; // Exit early
+        // }
+        // mysqli_stmt_close($stmt); // Close the previous statement
+
+        // // Now proceed to delete the record
+        $deleteSQL = "DELETE FROM leave_details WHERE id = ?";
+        $stmt = mysqli_prepare($this->conn, $deleteSQL);
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+
+        if (mysqli_stmt_execute($stmt)) {
+            $response = array('success' => true, 'message' => 'Leave Type deleted successfully.');
+            echo json_encode($response);
+        } else {
+            // Handle failure case for the DELETE statement
+            $response = array('success' => false, 'message' => 'Failed to delete the Leave Type.');
+            echo json_encode($response);
+        }
+
+        mysqli_stmt_close($stmt); // Always close the statement
+
+    } catch (\mysqli_sql_exception $e) {
+        error_log("Database error: " . $e->getMessage());
+        $response = array('success' => false, 'message' => 'Failed to delete due to a database error.');
+        echo json_encode($response);
+
+    } catch (\Exception $e) {
+        error_log("General error: " . $e->getMessage());
+        $response = array('success' => false, 'message' => 'An unexpected error occurred.');
+        echo json_encode($response);
+    }
+}
+
+
+    
+    
 }

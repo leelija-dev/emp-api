@@ -123,7 +123,7 @@ function handleLeaveRequest($method, $segments)
                 } else {
                     echo "emp_id or updated_by is missing.";
                 }
-             }
+            }
             // else if ($method == 'POST' && $third_segment == 'updateRequestStatus' && is_numeric($forth_segment)) {
             //     $id = $forth_segment;
 
@@ -172,8 +172,7 @@ function handleLeaveRequest($method, $segments)
                 } else {
                     echo "emp_id or updated_by is missing.";
                 }
-            }
-            else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'add') {
+            } else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'add') {
 
                 $name =  $_POST['name'];
 
@@ -185,10 +184,69 @@ function handleLeaveRequest($method, $segments)
 
                 $response = $Leave->updateType($id, $name);
                 echo $response;
+            } else if ($method == 'POST' && $third_segment == 'type-details' && $forth_segment == 'add') {
+
+                $data['type'] =  $_POST['type'];
+                $data['duration'] =  $_POST['duration'];
+
+                $response = $Leave->addLeaveDetails($data);
+                echo $response;
+            } else if ($method == 'PUT' && $third_segment == 'update-type-details' && is_numeric($forth_segment)) {
+                $id = $forth_segment;
+
+                $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+
+                if (strpos($contentType, 'multipart/form-data') !== false) {
+
+                    preg_match('/boundary=(.*)$/', $contentType, $matches);
+                    $boundary = $matches[1];
+
+                    $rawData = file_get_contents("php://input");
+
+                    $parts = explode("--" . $boundary, $rawData);
+
+                    $data = [];
+                    $fileData = [];
+
+                    foreach ($parts as $part) {
+                        if (strpos($part, 'Content-Disposition: form-data;') !== false) {
+                            if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
+                                $fieldName = $nameMatches[1];
+
+                                $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
+
+                                $data[$fieldName] = $value;
+                            }
+                        }
+                    }
+                }
+                if (!empty($fileData)) {
+                    $data = array_merge($data, $fileData);
+                }
+                $type = $data['type'] ?? null;
+                $duration = $data['duration'] ?? null;
+
+                if ($type && $duration) {
+
+                    $response = $Leave->updateTypeDetails($id, $data);
+                    echo $response;
+                } else {
+                    echo "type or duration is missing.";
+                }
+            } 
+            else if ($method == 'DELETE' && $third_segment == 'type' && $forth_segment == 'delete' && is_numeric($fifth_segment)) {
+
+                $id = $fifth_segment;
+                $response = $Leave->deleteType($id);
+                echo $response;
+            }
+            else if ($method == 'DELETE' && $third_segment == 'type-details' && $forth_segment == 'delete' && is_numeric($fifth_segment)) {
+
+                $id = $fifth_segment;
+                $response = $Leave->deleteTypeDetails($id);
+                echo $response;
             }
             break;
-
-
         default:
             echo json_encode([
                 "status" => "error",
