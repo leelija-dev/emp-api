@@ -136,27 +136,21 @@ function handleEmployeeRequest($method, $segments)
                                             $fileData[$fieldName] = $fileName; // Store file name in the data
                                         }
                                     } else {
-                                        // Regular form field
                                         $data[$fieldName] = $value;
                                     }
                                 }
                             }
                         }
 
-                        // Merge file data into $data array if any files were uploaded
                         if (!empty($fileData)) {
                             $data = array_merge($data, $fileData);
                         }
 
-                        // Check if all required data is present
                         if (!empty($data)) {
-                            // Handle image update or fallback to old image
                             if (!empty($data['image'])) {
-                                // Image was uploaded and moved successfully
                                 $response = $Employee->updateEmployeeDetails($id, $data);
                                 echo $response;
                             } else {
-                                // No new image, keep the existing image
                                 $emp = $Employee->getempDetails($id);
                                 $data['image'] = $emp['image'];
 
@@ -200,56 +194,46 @@ function handleEmployeeRequest($method, $segments)
             if ($method == 'PUT' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
                 $id = $forth_segment;
 
-                // Get Content-Type and extract the boundary
                 $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
 
-                // Check if the content type is multipart/form-data
                 if (strpos($contentType, 'multipart/form-data') !== false) {
-                    // Extract the boundary
+
                     preg_match('/boundary=(.*)$/', $contentType, $matches);
                     $boundary = $matches[1];
 
-                    // Get raw data from php://input
                     $rawData = file_get_contents("php://input");
 
-                    // Split the data using the boundary
                     $parts = explode("--" . $boundary, $rawData);
 
                     $data = [];
                     $fileData = [];
 
-                    // Parse each part of the form data
                     foreach ($parts as $part) {
                         if (strpos($part, 'Content-Disposition: form-data;') !== false) {
                             if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
                                 $fieldName = $nameMatches[1];
 
-                                // Get value or file content
                                 $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
 
-                                // Handle file upload manually
                                 if (strpos($part, 'filename=') !== false) {
-                                    // This is a file upload part
                                     $fileStartPos = strpos($part, "\r\n\r\n") + 4;
                                     $fileContent = substr($part, $fileStartPos, strpos($part, "--") - $fileStartPos);
                                     $fileName = trim(preg_match('/filename="([^"]+)"/', $part, $fileNameMatches) ? $fileNameMatches[1] : '');
 
                                     if (!empty($fileName)) {
-                                        // Save the file manually
                                         $target_directory = "public/emp-docs/";
                                         $target_file = $target_directory . basename($fileName);
                                         file_put_contents($target_file, $fileContent);
-                                        $fileData[$fieldName] = $fileName; // Store file name in the data
+                                        $fileData[$fieldName] = $fileName; 
                                     }
                                 } else {
-                                    // Regular form field
+
                                     $data[$fieldName] = $value;
                                 }
                             }
                         }
                     }
 
-                    // Merge file data into $data array if any files were uploaded
                     if (!empty($fileData)) {
                         $data = array_merge($data, $fileData);
                     }
