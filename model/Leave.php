@@ -377,6 +377,10 @@ class Leave extends \db\DatabaseConnection
             $row = mysqli_fetch_assoc($result);
             
             if ($row) {
+                if (is_array($status)) {
+                    // Handle the array case, for example, convert to a string or throw an error
+                    $status = implode(', ', $status);  // Convert array to a comma-separated string
+                } 
                 $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
            
                 $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
