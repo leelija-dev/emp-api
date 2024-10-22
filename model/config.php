@@ -19,7 +19,7 @@ class DatabaseConnection {
         $this->host = 'localhost';
         $this->user = 'root';
         $this->pass = '';
-        $this->db   = 'leelija_db';
+        $this->db   = 'leelija_01';
 
         $this->conn = new \mysqli($this->host, $this->user, $this->pass, $this->db);
 

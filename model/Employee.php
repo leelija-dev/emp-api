@@ -470,4 +470,102 @@ class Employee extends \db\DatabaseConnection
             return false;
         }
     }
+
+    public function getTeamMembers()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $status = 1;
+            $query = "SELECT * FROM employees
+              WHERE status = ?";
+
+            $stmt = mysqli_prepare($this->conn, $query);
+
+            if ($stmt) {
+
+                $stmt->bind_param('i', $status);
+                $stmt->execute();
+
+                $result = mysqli_stmt_get_result($stmt);
+                $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                if ($employeeDetails) {
+                    $response = array(
+                        'success' => true,
+                        'message' => 'Team Details Fetched successfully',
+                        'data' => $employeeDetails
+                    );
+                    echo json_encode($response);
+                    die();
+                } else {
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Failed to fetch details'
+                    );
+                    echo json_encode($response);
+                    die();
+                }
+            } else {
+                throw new \Exception('Failed to prepare the statement');
+            }
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
+
+    public function getFeatured()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $featured = 1;
+            $query = "SELECT name, image FROM employees
+              WHERE featured = ? LIMIT 4";
+
+            $stmt = mysqli_prepare($this->conn, $query);
+
+            if ($stmt) {
+
+                $stmt->bind_param('i', $featured);
+                $stmt->execute();
+
+                $result = mysqli_stmt_get_result($stmt);
+                $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                if ($employeeDetails) {
+                    $response = array(
+                        'success' => true,
+                        'message' => 'Featured Member Details Fetched successfully',
+                        'data' => $employeeDetails
+                    );
+                    echo json_encode($response);
+                    die();
+                } else {
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Failed to fetch details'
+                    );
+                    echo json_encode($response);
+                    die();
+                }
+            } else {
+                throw new \Exception('Failed to prepare the statement');
+            }
+        } catch (\mysqli_sql_exception $e) {
+
+            error_log("Database error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'Failed to get details due to a database error');
+            echo json_encode($response);
+        } catch (\Exception $e) {
+            error_log("General error: " . $e->getMessage());
+            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            echo json_encode($response);
+        }
+    }
 }

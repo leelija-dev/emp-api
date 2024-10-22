@@ -80,24 +80,18 @@ function handleLeaveRequest($method, $segments)
                     // Get raw data from php://input
                     $rawData = file_get_contents("php://input");
 
-                    // Split the data using the boundary
                     $parts = explode("--" . $boundary, $rawData);
 
                     $data = [];
                     $fileData = [];
 
-                    // Parse each part of the form data
                     foreach ($parts as $part) {
                         if (strpos($part, 'Content-Disposition: form-data;') !== false) {
                             if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
                                 $fieldName = $nameMatches[1];
 
-                                // Get value or file content
                                 $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
 
-                                // Handle file upload manually
-
-                                // Regular form field
                                 $data[$fieldName] = $value;
                             }
                         }
@@ -178,13 +172,58 @@ function handleLeaveRequest($method, $segments)
 
                 $response = $Leave->addType($name);
                 echo $response;
-            } else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'update' && is_numeric($fifth_segment)) {
-                $id = $fifth_segment;
-                $name =  $_POST['name'];
+            }
+            //  else if ($method == 'POST' && $third_segment == 'type' && $forth_segment == 'update' && is_numeric($fifth_segment)) {
+            //     $id = $fifth_segment;
+            //     $name =  $_POST['name'];
 
-                $response = $Leave->updateType($id, $name);
-                echo $response;
-            } else if ($method == 'POST' && $third_segment == 'type-details' && $forth_segment == 'add') {
+            //     $response = $Leave->updateType($id, $name);
+            //     echo $response;
+            // } 
+            else if ($method == 'PUT' && $third_segment == 'type' && is_numeric($forth_segment) && is_numeric($fifth_segment)) {
+                $id = $fifth_segment;
+
+                $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+
+                if (strpos($contentType, 'multipart/form-data') !== false) {
+
+                    preg_match('/boundary=(.*)$/', $contentType, $matches);
+                    $boundary = $matches[1];
+
+                    $rawData = file_get_contents("php://input");
+
+                    $parts = explode("--" . $boundary, $rawData);
+
+                    $data = [];
+                    $fileData = [];
+
+                    foreach ($parts as $part) {
+                        if (strpos($part, 'Content-Disposition: form-data;') !== false) {
+                            if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
+                                $fieldName = $nameMatches[1];
+
+                                $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
+
+                                $data[$fieldName] = $value;
+                            }
+                        }
+                    }
+                }
+                if (!empty($fileData)) {
+                    $data = array_merge($data, $fileData);
+                }
+                // $type = $data['type'] ?? null;
+                $name = $data['name'] ?? null;
+
+                if ($name) {
+
+                    $response = $Leave->updateType($id, $data);
+                    echo $response;
+                } else {
+                    echo "type or duration is missing.";
+                }
+            } 
+            else if ($method == 'POST' && $third_segment == 'type-details' && $forth_segment == 'add') {
 
                 $data['type'] =  $_POST['type'];
                 $data['duration'] =  $_POST['duration'];

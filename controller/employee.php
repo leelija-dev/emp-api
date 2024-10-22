@@ -23,7 +23,14 @@ function handleEmployeeRequest($method, $segments)
                     $id = intval($third_segment);
                     $response = $Employee->getEmployeeDetails($id);
                     echo $response;
-                } else {
+                }else if($third_segment == 'details'){
+                    $response = $Employee->getTeamMembers();
+                    echo $response;
+                }else if($third_segment == 'featured'){
+                    $response = $Employee->getFeatured();
+                    echo $response;
+                }
+                else {
                     // Fetch all employee names
                     $response = $Employee->getEmployeesName();
                     echo $response;
