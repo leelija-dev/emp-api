@@ -367,8 +367,9 @@ class Employee extends \db\DatabaseConnection
         $phone = $data['phone'];
         $email = $data['email'];
         $password = $data['password'];
-        $status = $data['status'];
-        $featured = $data['featured'];
+        $status = 0;
+        $featured = 0;
+
 
 
         $name = htmlspecialchars(trim($name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
@@ -396,14 +397,14 @@ class Employee extends \db\DatabaseConnection
 
 
         // Ensure sanitized strings are not empty
-        if (
-            empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($image) || empty($phone) || empty($email)
-            || empty($password) || empty($status) || empty($featured)
-        ) {
-            $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
-            echo json_encode($response);
-            return;
-        }
+        // if (
+        //     empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($image) || empty($phone) || empty($email)
+        //     || empty($password) || empty($status) || empty($featured)
+        // ) {
+        //     $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
+        //     echo json_encode($response);
+        //     return;
+        // }
 
         // Set MySQLi to throw exceptions for errors
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);

@@ -276,8 +276,9 @@ function handleEmployeeRequest($method, $segments)
                 $id = intval($third_segment);
                 $response = $Employee->getEmployeeDetails($id);
                 echo $response;
-            } elseif ($method == 'POST' && $third_segment == 'add') {
-                // Add a new employee
+            } 
+            
+            elseif ($method == 'POST' && $third_segment == 'add') {
                 $data = array(
                     'name' => $_POST['name'],
                     'designation' => $_POST['designation'],
@@ -286,23 +287,56 @@ function handleEmployeeRequest($method, $segments)
                     'phone' => $_POST['phone'],
                     'email' => $_POST['email'],
                     'password' => $_POST['password'],
-                    'status' => $_POST['status'],
-                    'featured' => $_POST['featured'],
                 );
                 if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
                     $image = $_FILES['image']['name'];
-                    $doc_tmp_path = $_FILES['image']['tmp_name'];
                     $target_directory = "public/emp-docs/";
-                    $doc_path = $target_directory . basename($image);
-                    if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-                        $data['image'] = $image;
+                    $new_file_name = time() . "_" . basename($image);
+                    $target_path = $target_directory . $new_file_name;
+            
+                    // Move the uploaded file to the desired directory
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
+                        $data['image'] = $new_file_name;
                         $response = $Employee->addEmployee($data);
-                        echo $response;
                     } else {
+                        // Handle file moving failure
                         echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
                     }
+                } else {
+                    // If no image is uploaded, process the rest of the data
+                    $response = $Employee->addEmployee($data);
+                    echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
                 }
-            } elseif ($method == 'POST' && $third_segment == 'add-doc') {
+            }
+            
+            // elseif ($method == 'POST' && $third_segment == 'add') {
+            //     // Add a new employee
+            //     $data = array(
+            //         'name' => $_POST['name'],
+            //         'designation' => $_POST['designation'],
+            //         'doj' => $_POST['doj'],
+            //         'gender' => $_POST['gender'],
+            //         'phone' => $_POST['phone'],
+            //         'email' => $_POST['email'],
+            //         'password' => $_POST['password'],
+            //         'status' => $_POST['status'],
+            //         'featured' => $_POST['featured'],
+            //     );
+            //     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+            //         $image = $_FILES['image']['name'];
+            //         $doc_tmp_path = $_FILES['image']['tmp_name'];
+            //         $target_directory = "public/emp-docs/";
+            //         $doc_path = $target_directory . basename($image);
+            //         if (move_uploaded_file($doc_tmp_path, $doc_path)) {
+            //             $data['image'] = $image;
+            //             $response = $Employee->addEmployee($data);
+            //             echo $response;
+            //         } else {
+            //             echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
+            //         }
+            //     }
+            // } 
+            elseif ($method == 'POST' && $third_segment == 'add-doc') {
                 // Add a new employee do
 
                 // $doc_name = $_REQUEST['doc_name'];
