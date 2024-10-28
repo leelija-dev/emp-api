@@ -20,6 +20,8 @@ require_once 'model/Employee.php';
 require_once 'model/Ticket.php';
 require_once 'model/Login.php';
 require_once 'model/Leave.php';
+require_once 'model/Location.php';
+
 
 $method = $_SERVER['REQUEST_METHOD'];
 $url = $_SERVER['REQUEST_URI'];
@@ -62,6 +64,10 @@ switch ($second_segment) {
     case 'leave':
         require_once 'controller/leave.php';
         handleLeaveRequest($method, $segments);
+        break;
+    case 'location':
+        require_once 'controller/location.php';
+        handleLocationRequest($method, $segments);
         break;
     default:
         header("HTTP/1.1 404 Not Found");

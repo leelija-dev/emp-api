@@ -15,22 +15,19 @@ function handleEmployeeRequest($method, $segments)
     switch ($second_segment) {
         case 'employees':
             if ($method == 'GET') {
-                //Fetch list of all employees (name list only)
-
-
+               
                 if ($third_segment && is_numeric($third_segment)) {
                     // Fetch employee details by ID
                     $id = intval($third_segment);
                     $response = $Employee->getEmployeeDetails($id);
                     echo $response;
-                }else if($third_segment == 'details'){
+                } else if ($third_segment == 'details') {
                     $response = $Employee->getTeamMembers();
                     echo $response;
-                }else if($third_segment == 'featured'){
+                } else if ($third_segment == 'featured') {
                     $response = $Employee->getFeatured();
                     echo $response;
-                }
-                else {
+                } else {
                     // Fetch all employee names
                     $response = $Employee->getEmployeesName();
                     echo $response;
@@ -173,6 +170,11 @@ function handleEmployeeRequest($method, $segments)
                 } else {
                     echo "Employee not found.";
                 }
+            } else if ($method == 'GET' && $third_segment == 'address' && is_numeric($forth_segment)) {
+                $emp_id = $forth_segment;
+                // print_r($emp_id); die();
+                $response = $Employee->getEmployeeAddress($emp_id);
+                echo $response;
             }
             // else if ($method == 'POST' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
             //     $id = $forth_segment;
@@ -198,7 +200,7 @@ function handleEmployeeRequest($method, $segments)
             //         echo $response;
             //     }
             // }
-            if ($method == 'PUT' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
+            else if ($method == 'PUT' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
                 $id = $forth_segment;
 
                 $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
@@ -231,7 +233,7 @@ function handleEmployeeRequest($method, $segments)
                                         $target_directory = "public/emp-docs/";
                                         $target_file = $target_directory . basename($fileName);
                                         file_put_contents($target_file, $fileContent);
-                                        $fileData[$fieldName] = $fileName; 
+                                        $fileData[$fieldName] = $fileName;
                                     }
                                 } else {
 
@@ -276,9 +278,61 @@ function handleEmployeeRequest($method, $segments)
                 $id = intval($third_segment);
                 $response = $Employee->getEmployeeDetails($id);
                 echo $response;
-            } 
-            
-            elseif ($method == 'POST' && $third_segment == 'add') {
+            } elseif ($method == 'PUT' && $third_segment == 'update-address' && is_numeric($forth_segment)) {
+                $id = $forth_segment;
+                // print_r($id);  die();
+                $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+
+                if (strpos($contentType, 'multipart/form-data') !== false) {
+
+                    preg_match('/boundary=(.*)$/', $contentType, $matches);
+                    $boundary = $matches[1];
+
+                    $rawData = file_get_contents("php://input");
+
+                    $parts = explode("--" . $boundary, $rawData);
+
+                    $data = [];
+                    $fileData = [];
+
+                    foreach ($parts as $part) {
+                        if (strpos($part, 'Content-Disposition: form-data;') !== false) {
+                            if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
+                                $fieldName = $nameMatches[1];
+
+                                $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
+
+                                $data[$fieldName] = $value;
+                            }
+                        }
+                    }
+
+                    // if (!empty($fileData)) {
+                    //     $data = array_merge($data, $fileData);
+                    // }
+
+                    // Extract required fields
+                    // $emp_id = $data['emp_id'];
+                    $address_line1 = $data['address_line1'] ?? null;
+                    $address_line2 = $data['address_line2'] ?? null;
+                    $city = $data['city'] ?? null;
+                    $state = $data['state'] ?? null;
+                    $pin = $data['pin'] ?? null;
+                    $country = $data['country'] ?? null;
+
+
+                    // Ensure that required fields are present
+                    if ($address_line1 && $pin) {
+
+                        $response = $Employee->updateEmpAddress($id, $data);
+                        echo $response;
+                    } else {
+                        echo json_encode(array('success' => false, 'message' => 'address and pin is missing.'));
+                    }
+                } else {
+                    echo "Invalid Content-Type. Expected multipart/form-data.";
+                }
+            } elseif ($method == 'POST' && $third_segment == 'add') {
                 $data = array(
                     'name' => $_POST['name'],
                     'designation' => $_POST['designation'],
@@ -293,7 +347,7 @@ function handleEmployeeRequest($method, $segments)
                     $target_directory = "public/emp-docs/";
                     $new_file_name = time() . "_" . basename($image);
                     $target_path = $target_directory . $new_file_name;
-            
+
                     // Move the uploaded file to the desired directory
                     if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
                         $data['image'] = $new_file_name;
@@ -308,7 +362,7 @@ function handleEmployeeRequest($method, $segments)
                     echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
                 }
             }
-            
+
             // elseif ($method == 'POST' && $third_segment == 'add') {
             //     // Add a new employee
             //     $data = array(
@@ -356,7 +410,23 @@ function handleEmployeeRequest($method, $segments)
                         echo "Error moving the uploaded file.";
                     }
                 }
+            } 
+            elseif ($method == 'POST' && $third_segment == 'address' && $forth_segment == 'add') {
+                $data = array(
+                    'emp_id'  => $_POST['emp_id'],
+                    'address_line1' => $_POST['address_line1'],
+                    'address_line2' => $_POST['address_line2'],
+                    'city' => $_POST['city'],
+                    'state' => $_POST['state'],
+                    'pin' => $_POST['pin'],
+                    'country' => $_POST['country'],
+                );
+
+
+                $response = $Employee->addEmployeeAddress($data);
+                echo $response;
             }
+
             break;
         default:
             header("HTTP/1.1 404 Not Found");
