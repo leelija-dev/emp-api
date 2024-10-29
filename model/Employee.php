@@ -313,14 +313,14 @@ class Employee extends \db\DatabaseConnection
 
 
         // Ensure sanitized strings are not empty
-        if (
-            empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($phone) || empty($email)
-            || empty($password) || empty($status) || empty($featured)
-        ) {
-            $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
-            echo json_encode($response);
-            return;
-        }
+        // if (
+        //     empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($phone) || empty($email)
+        //     || empty($password) || empty($status) || empty($featured)
+        // ) {
+        //     $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
+        //     echo json_encode($response);
+        //     return;
+        // }
 
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);

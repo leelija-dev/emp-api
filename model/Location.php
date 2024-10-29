@@ -9,7 +9,7 @@ class Location extends \db\DatabaseConnection
     public function getCountryName(): void
     {
         header('Content-Type: application/json');
-        $query = "SELECT name, iso3 FROM countries"; 
+        $query = "SELECT id, name, iso3 FROM countries"; 
         $stmt = mysqli_prepare($this->conn, $query);
 
         if ($stmt) {
@@ -78,7 +78,7 @@ class Location extends \db\DatabaseConnection
     {
         header('Content-Type: application/json');
 
-        $query = "SELECT name FROM states WHERE country_id = ?";
+        $query = "SELECT id, name FROM states WHERE country_id = ?";
         $stmt = mysqli_prepare($this->conn, $query);
 
         if ($stmt) {
@@ -120,7 +120,7 @@ class Location extends \db\DatabaseConnection
     {
         header('Content-Type: application/json');
 
-        $query = "SELECT name FROM cities WHERE state_id = ?";
+        $query = "SELECT id, name FROM cities WHERE state_id = ?";
         $stmt = mysqli_prepare($this->conn, $query);
 
         if ($stmt) {
