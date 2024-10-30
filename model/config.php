@@ -3,6 +3,13 @@ namespace db;
 
 use mysqli; 
 
+require 'vendor/autoload.php'; 
+use \Firebase\JWT\JWT;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../'); 
+$dotenv->load();  // Load environment variables from .env file
+
 class DatabaseConnection {
 
     private $host;
@@ -16,10 +23,10 @@ class DatabaseConnection {
     }
 
     private function db_connect() {
-        $this->host = 'localhost';
-        $this->user = 'root';
-        $this->pass = '';
-        $this->db   = 'leelija_01';
+        $this->host = $_ENV['DATABASE_HOST'];
+        $this->user = $_ENV['DATABASE_USER'];
+        $this->pass = $_ENV['DATABASE_PASSWORD'];
+        $this->db   = $_ENV['DATABASE_NAME'];
 
         $this->conn = new \mysqli($this->host, $this->user, $this->pass, $this->db);
 
