@@ -229,12 +229,6 @@ function handleEmployeeRequest($method, $segments)
                         }
                     }
 
-                    // if (!empty($fileData)) {
-                    //     $data = array_merge($data, $fileData);
-                    // }
-
-                    // Extract required fields
-                    // $emp_id = $data['emp_id'];
                     $address_line1 = $data['address_line1'] ?? null;
                     $address_line2 = $data['address_line2'] ?? null;
                     $city = $data['city'] ?? null;
@@ -326,6 +320,55 @@ function handleEmployeeRequest($method, $segments)
                 $response = $Employee->addEmployeeAddress($data);
                 echo $response;
             }
+            elseif ($method == 'PUT' && $third_segment == 'change-password' && is_numeric($forth_segment)) {
+                $id = intval($forth_segment);
+                $exist = $Employee->checkIfEmployeeExists($id);
+                if ($exist) {
+                    $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+            
+                    if (strpos($contentType, 'multipart/form-data') !== false) {
+                        preg_match('/boundary=(.*)$/', $contentType, $matches);
+                        $boundary = $matches[1];
+                        $rawData = file_get_contents("php://input");
+                        $parts = explode("--" . $boundary, $rawData);
+            
+                        $data = [];
+                        foreach ($parts as $part) {
+                            if (strpos($part, 'Content-Disposition: form-data;') !== false) {
+                                if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
+                                    $fieldName = $nameMatches[1];
+                                    $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
+                                  
+                                    $data[$fieldName] = $value;
+                                }
+                            }
+                        }
+            
+                        // Check if only password field is provided
+                        if (isset($data['password']) && count($data) === 1) {
+                            // Update password only
+                            $response = $Employee->changePassword($id, $data);
+                            echo $response;
+                        } else {
+                            // Handle the image and other fields as before
+                            if (!empty($data['image'])) {
+                                $response = $Employee->updateEmployeeDetails($id, $data);
+                                echo $response;
+                            } else {
+                                $emp = $Employee->getempDetails($id);
+                                $data['image'] = $emp['image'];
+                                $response = $Employee->updateEmployeeDetails($id, $data);
+                                echo $response;
+                            }
+                        }
+                    } else {
+                        echo "Content-Type must be multipart/form-data";
+                    }
+                } else {
+                    echo "Employee not found.";
+                }
+            }
+            
 
             break;
         default:

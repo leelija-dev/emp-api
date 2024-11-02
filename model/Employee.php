@@ -357,7 +357,7 @@ class Employee extends \db\DatabaseConnection
             echo json_encode($response);
         }
     }
-
+//Update employee address using employee id
     public function updateEmpAddress($emp_id, $data)
     {
 
@@ -728,6 +728,80 @@ class Employee extends \db\DatabaseConnection
 
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
+        }
+    }
+
+    public function changePassword($emp_id, $data)
+    {
+        header('Content-Type: application/json');
+
+        $password = $data['password'];
+        // $address_line2 = $data['address_line2'];
+        // $city =  $data['city'];
+        // $state = $data['state'];
+        // $pin = $data['pin'];
+        // $country = $data['country'];
+
+
+        $query = "SELECT * FROM employees WHERE emp_id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $query);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $emp_id);
+            $stmt->execute();
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+
+            if ($row) {
+                $password = htmlspecialchars(trim($password), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $address_line2 = htmlspecialchars(trim($address_line2), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $city = htmlspecialchars(trim($city), ENT_QUOTES, 'UTF-8');
+                // $state = htmlspecialchars(trim($state), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $pin = htmlspecialchars(trim($pin), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $country = htmlspecialchars(trim($country), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+
+                // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+                $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $address_line2 = filter_var($address_line2, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $city = filter_var($city, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $state = filter_var($state, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $pin = filter_var($pin, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $country = filter_var($country, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+                try {
+
+                    $sql = "UPDATE employees SET password = ? WHERE emp_id = ?";
+
+                    $stmt = mysqli_prepare($this->conn, $sql);
+
+
+                    mysqli_stmt_bind_param($stmt, 'si', $password, $emp_id);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $response = array('success' => true, 'message' => 'Employees password updated successfully');
+                        echo json_encode($response);
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } catch (\mysqli_sql_exception $e) {
+                    error_log("Database error: " . $e->getMessage());
+
+                    $response = array('success' => false, 'message' => 'Failed to update password due to a database error');
+                    echo json_encode($response);
+                } catch (\Exception $e) {
+                    error_log("General error: " . $e->getMessage());
+                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    echo json_encode($response);
+                }
+            } else {
+                $response = array('success' => false, 'message' => 'Employee id not found');
+                echo json_encode($response);
+            }
         }
     }
 }
