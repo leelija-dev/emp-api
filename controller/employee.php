@@ -15,7 +15,7 @@ function handleEmployeeRequest($method, $segments)
     switch ($second_segment) {
         case 'employees':
             if ($method == 'GET') {
-               
+
                 if ($third_segment && is_numeric($third_segment)) {
                     // Fetch employee details by ID
                     $id = intval($third_segment);
@@ -43,76 +43,21 @@ function handleEmployeeRequest($method, $segments)
             }
             break;
         case 'emp':
-            //             if ($method == 'PUT' && $third_segment == 'update' && is_numeric($forth_segment)) {
-
-            //                 // parse_str(file_get_contents("php://input"), $put_vars);
-            //                 $id = intval($forth_segment);
-            //                 // print_r($id);  die();
-            //                 $exist = $Employee->checkIfEmployeeExists($id);
-            //                 if ($exist) {
-            //                     // $data['name'] = $_REQUEST['name'];
-            //                     // $data['designation'] = $_REQUEST['designation'];
-            //                     // $data['doj'] = $_REQUEST['doj'];
-            //                     // $data['gender'] = $_REQUEST['gender'];
-            //                     // $data['phone'] = $_REQUEST['phone'];
-            //                     // $data['email'] = $_REQUEST['email'];
-            //                     // $data['password'] = $_REQUEST['password'];
-            //                     // $data['status'] = $_REQUEST['status'];
-            //                     // $data['featured'] = $_REQUEST['featured'];
-
-            //                     // parse_str(file_get_contents("php://input"), $put_vars);
-            // parse_str(file_get_contents('php://input'), $_PUT);
-            //                     $data['name'] = $_PUT['name'] ?? null;
-            //                     print_r(json_encode($data['name']));  die();
-            //                     $data['designation'] = $put_vars['designation'] ?? null;
-            //                     $data['doj'] = $put_vars['doj'] ?? null;
-            //                     $data['gender'] = $put_vars['gender'] ?? null;
-            //                     $data['phone'] = $put_vars['phone'] ?? null;
-            //                     $data['email'] = $put_vars['email'] ?? null;
-            //                     $data['password'] = $put_vars['password'] ?? null;
-            //                     $data['status'] = $put_vars['status'] ?? null;
-            //                     $data['featured'] = $put_vars['featured'] ?? null;
-
-            //                     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-            //                         $data['image'] = $_FILES['image']['name'];
-            //                         $image = $_FILES['image']['name'];
-            //                         $doc_tmp_path = $_FILES['image']['tmp_name'];
-            //                         $target_directory = "public/emp-docs/";
-            //                         $doc_path = $target_directory . basename($image);
-
-            //                         if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-            //                             $response = $Employee->updateEmployeeDetails($id, $data);
-            //                             echo $response;
-            //                         } else {
-            //                             echo "Error moving the uploaded file.";
-            //                         }
-            //                     } else {
-            //                         $emp = $Employee->getempDetails($id);
-            //                         $data['image'] = $emp['image'];
-            //                         $response = $Employee->updateEmployeeDetails($id, $data);
-            //                         echo $response;
-            //                     }
-            //                 } else {
-            //                     echo "The Employee Not Found";
-            //                 }
             if ($method == 'PUT' && $third_segment == 'update' && is_numeric($forth_segment)) {
                 $id = intval($forth_segment);
                 $exist = $Employee->checkIfEmployeeExists($id);
 
                 if ($exist) {
-                    // Get the Content-Type header
                     $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
 
-                    // Check if the content type is multipart/form-data
                     if (strpos($contentType, 'multipart/form-data') !== false) {
-                        // Get the boundary
                         preg_match('/boundary=(.*)$/', $contentType, $matches);
                         $boundary = $matches[1];
 
-                        // Get raw data from the input stream
+                      
                         $rawData = file_get_contents("php://input");
 
-                        // Split the data into parts using the boundary
+                   
                         $parts = explode("--" . $boundary, $rawData);
 
                         $data = [];
@@ -176,30 +121,7 @@ function handleEmployeeRequest($method, $segments)
                 $response = $Employee->getEmployeeAddress($emp_id);
                 echo $response;
             }
-            // else if ($method == 'POST' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
-            //     $id = $forth_segment;
-            //     $emp_id = $_REQUEST['emp_id'];
-            //     $updated_by = $_REQUEST['updated_by'];
-            //     if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
-            //         $doc_name = $_FILES['doc_name']['name'];
-            //         $doc_tmp_path = $_FILES['doc_name']['tmp_name'];
-            //         $target_directory = "public/emp-docs/";
-            //         $doc_path = $target_directory . basename($doc_name);
-
-            //         if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-            //             $response = $Employee->updateEmployeeDoc($id, $emp_id, $doc_name, $doc_path, $updated_by);
-            //             echo $response;
-            //         } else {
-            //             echo "Error moving the uploaded file.";
-            //         }
-            //     } else {
-            //         $data = $Employee->getDocDetails($id);
-            //         $doc_name = $data['doc_name'];
-            //         $doc_path = $data['doc_path'];
-            //         $response = $Employee->updateEmployeeDoc($id, $emp_id, $doc_name, $doc_path, $updated_by);
-            //         echo $response;
-            //     }
-            // }
+            
             else if ($method == 'PUT' && $third_segment == 'update-doc' && is_numeric($forth_segment)) {
                 $id = $forth_segment;
 
@@ -280,7 +202,7 @@ function handleEmployeeRequest($method, $segments)
                 echo $response;
             } elseif ($method == 'PUT' && $third_segment == 'update-address' && is_numeric($forth_segment)) {
                 $id = $forth_segment;
-                // print_r($id);  die();
+
                 $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
 
                 if (strpos($contentType, 'multipart/form-data') !== false) {
@@ -363,55 +285,33 @@ function handleEmployeeRequest($method, $segments)
                 }
             }
 
-            // elseif ($method == 'POST' && $third_segment == 'add') {
-            //     // Add a new employee
-            //     $data = array(
-            //         'name' => $_POST['name'],
-            //         'designation' => $_POST['designation'],
-            //         'doj' => $_POST['doj'],
-            //         'gender' => $_POST['gender'],
-            //         'phone' => $_POST['phone'],
-            //         'email' => $_POST['email'],
-            //         'password' => $_POST['password'],
-            //         'status' => $_POST['status'],
-            //         'featured' => $_POST['featured'],
-            //     );
-            //     if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-            //         $image = $_FILES['image']['name'];
-            //         $doc_tmp_path = $_FILES['image']['tmp_name'];
-            //         $target_directory = "public/emp-docs/";
-            //         $doc_path = $target_directory . basename($image);
-            //         if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-            //             $data['image'] = $image;
-            //             $response = $Employee->addEmployee($data);
-            //             echo $response;
-            //         } else {
-            //             echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
-            //         }
-            //     }
-            // } 
+            
             elseif ($method == 'POST' && $third_segment == 'add-doc') {
-                // Add a new employee do
-
-                // $doc_name = $_REQUEST['doc_name'];
-                $updated_by = $_REQUEST['updated_by'];
-                $emp_id = $_REQUEST['emp_id'];
-
+               
+                $data['updated_by'] = $_REQUEST['updated_by'];
+                $data['doc_name'] = $_FILES['doc_name']['name'];
+                $data['emp_id'] = $_REQUEST['emp_id'];
 
                 if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
                     $doc_name = $_FILES['doc_name']['name'];
-                    $doc_tmp_path = $_FILES['doc_name']['tmp_name'];
                     $target_directory = "public/emp-docs/";
-                    $doc_path = $target_directory . basename($doc_name);
-                    if (move_uploaded_file($doc_tmp_path, $doc_path)) {
-                        $response = $Employee->addEmployeeDoc($emp_id, $doc_name, $doc_path, $updated_by);
-                        echo $response;
+                    $doc_name = time() . "_" . basename($doc_name);
+                    $doc_path = $target_directory . $doc_name;
+                    $data['doc_path'] = $doc_path;
+                    // Move the uploaded file to the desired directory
+                    if (move_uploaded_file($_FILES['doc_name']['tmp_name'], $doc_path)) {
+                        $data['doc_name'] = $doc_name;
+                        $response = $Employee->addEmployeeDoc($data);
                     } else {
-                        echo "Error moving the uploaded file.";
+                        // Handle file moving failure
+                        echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
                     }
+                } else {
+                    // If no image is uploaded, process the rest of the data
+                    $response = $Employee->addEmployee($data);
+                    echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
                 }
-            } 
-            elseif ($method == 'POST' && $third_segment == 'address' && $forth_segment == 'add') {
+            } elseif ($method == 'POST' && $third_segment == 'address' && $forth_segment == 'add') {
                 $data = array(
                     'emp_id'  => $_POST['emp_id'],
                     'address_line1' => $_POST['address_line1'],
