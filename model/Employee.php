@@ -804,4 +804,29 @@ class Employee extends \db\DatabaseConnection
             }
         }
     }
+
+    public function moveUpload($file) {
+        if (isset($file) && $file['error'] == UPLOAD_ERR_OK) {
+            $image = $file['name'];
+            $target_directory = "public/emp-docs/";
+            $new_file_name = time() . "_" . basename($image);
+            $target_path = $target_directory . $new_file_name;
+    
+            if (move_uploaded_file($file['tmp_name'], $target_path)) {
+                return $new_file_name; // Return the new filename if upload succeeds
+            } else {
+                return false; // Return false if upload fails
+            }
+        }
+        return false; // Return false if file is not set or there is an error
+    }
+
+    function deletePreviousImage($data, $directory) {
+        
+        $oldImage = $data['image'];
+        
+        if (!empty($oldImage) && file_exists($directory . $oldImage)) {
+            unlink($directory . $oldImage); // Delete old file
+        }
+    }
 }

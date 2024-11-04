@@ -43,46 +43,54 @@ function handleEmployeeRequest($method, $segments)
             }
             break;
         case 'emp':
+           
             if ($method == 'PUT' && $third_segment == 'update' && is_numeric($forth_segment)) {
                 $id = intval($forth_segment);
                 $exist = $Employee->checkIfEmployeeExists($id);
-
+            
                 if ($exist) {
                     $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
-
+            
                     if (strpos($contentType, 'multipart/form-data') !== false) {
                         preg_match('/boundary=(.*)$/', $contentType, $matches);
                         $boundary = $matches[1];
-
-                      
+            
+                       
                         $rawData = file_get_contents("php://input");
-
-                   
+            
+                        // Split parts based on the boundary
                         $parts = explode("--" . $boundary, $rawData);
-
+            
                         $data = [];
                         $fileData = [];
                         foreach ($parts as $part) {
                             if (strpos($part, 'Content-Disposition: form-data;') !== false) {
-                                // Parse each part for form fields and files
                                 if (preg_match('/name="([^"]+)"/', $part, $nameMatches)) {
                                     $fieldName = $nameMatches[1];
-                                    // Get value or file content
                                     $value = trim(substr($part, strpos($part, "\r\n\r\n") + 4));
-
-                                    // Handle file upload manually
+            
                                     if (strpos($part, 'filename=') !== false) {
-                                        // This is a file upload part
+                                        // This is a file part
                                         $fileStartPos = strpos($part, "\r\n\r\n") + 4;
-                                        $fileContent = substr($part, $fileStartPos, strpos($part, "--") - $fileStartPos);
+                                        $fileContent = substr($part, $fileStartPos, -2);
                                         $fileName = trim(preg_match('/filename="([^"]+)"/', $part, $fileNameMatches) ? $fileNameMatches[1] : '');
-
+                                    
                                         if (!empty($fileName)) {
-                                            // Save the file manually
                                             $target_directory = "public/emp-docs/";
-                                            $target_file = $target_directory . basename($fileName);
+                                            $new_fileName = time() . "_" . basename($fileName);
+                                            $target_file = $target_directory . $new_fileName; // Include target directory in the path
+                                    
+                                            // Delete the old file if updating
+                                            $emp = $Employee->getempDetails($id);
+                                            if (!empty($emp['image']) && file_exists($target_directory . $emp['image'])) {
+                                                $Employee->deletePreviousImage($emp, $target_directory);
+                                            }
+                                    
+                                            // Save the new file in the target directory
                                             file_put_contents($target_file, $fileContent);
-                                            $fileData[$fieldName] = $fileName; // Store file name in the data
+                                    
+                                            // Store only the file name in the data array
+                                            $fileData[$fieldName] = $new_fileName;
                                         }
                                     } else {
                                         $data[$fieldName] = $value;
@@ -90,11 +98,11 @@ function handleEmployeeRequest($method, $segments)
                                 }
                             }
                         }
-
+            
                         if (!empty($fileData)) {
                             $data = array_merge($data, $fileData);
                         }
-
+            
                         if (!empty($data)) {
                             if (!empty($data['image'])) {
                                 $response = $Employee->updateEmployeeDetails($id, $data);
@@ -102,7 +110,6 @@ function handleEmployeeRequest($method, $segments)
                             } else {
                                 $emp = $Employee->getempDetails($id);
                                 $data['image'] = $emp['image'];
-
                                 $response = $Employee->updateEmployeeDetails($id, $data);
                                 echo $response;
                             }
@@ -115,7 +122,9 @@ function handleEmployeeRequest($method, $segments)
                 } else {
                     echo "Employee not found.";
                 }
-            } else if ($method == 'GET' && $third_segment == 'address' && is_numeric($forth_segment)) {
+            }
+            
+             else if ($method == 'GET' && $third_segment == 'address' && is_numeric($forth_segment)) {
                 $emp_id = $forth_segment;
                 // print_r($emp_id); die();
                 $response = $Employee->getEmployeeAddress($emp_id);
@@ -258,53 +267,52 @@ function handleEmployeeRequest($method, $segments)
                     'email' => $_POST['email'],
                     'password' => $_POST['password'],
                 );
-                if (isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
-                    $image = $_FILES['image']['name'];
-                    $target_directory = "public/emp-docs/";
-                    $new_file_name = time() . "_" . basename($image);
-                    $target_path = $target_directory . $new_file_name;
-
-                    // Move the uploaded file to the desired directory
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
-                        $data['image'] = $new_file_name;
-                        $response = $Employee->addEmployee($data);
-                    } else {
-                        // Handle file moving failure
-                        echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
-                    }
-                } else {
-                    // If no image is uploaded, process the rest of the data
+               
+                $uploaded_image = $Employee->moveUpload($_FILES['image']);
+                if ($uploaded_image) {
+                    $data['image'] = $uploaded_image;
                     $response = $Employee->addEmployee($data);
-                    echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
+                } else {
+                    // Handle error if image upload fails
+                    echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file or no image uploaded.'));
                 }
             }
-
-            
+         
             elseif ($method == 'POST' && $third_segment == 'add-doc') {
                
                 $data['updated_by'] = $_REQUEST['updated_by'];
                 $data['doc_name'] = $_FILES['doc_name']['name'];
                 $data['emp_id'] = $_REQUEST['emp_id'];
-
-                if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
-                    $doc_name = $_FILES['doc_name']['name'];
+                $uploaded_image = $Employee->moveUpload($_FILES['doc_name']);
+                if ($uploaded_image) {
+                    $data['doc_name'] = $uploaded_image;
                     $target_directory = "public/emp-docs/";
-                    $doc_name = time() . "_" . basename($doc_name);
-                    $doc_path = $target_directory . $doc_name;
-                    $data['doc_path'] = $doc_path;
-                    // Move the uploaded file to the desired directory
-                    if (move_uploaded_file($_FILES['doc_name']['tmp_name'], $doc_path)) {
-                        $data['doc_name'] = $doc_name;
-                        $response = $Employee->addEmployeeDoc($data);
-                    } else {
-                        // Handle file moving failure
-                        echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
-                    }
+                    $data['doc_path'] = $target_directory . $uploaded_image;
+                    $response = $Employee->addEmployeeDoc($data);
                 } else {
-                    // If no image is uploaded, process the rest of the data
-                    $response = $Employee->addEmployee($data);
-                    echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
+                    // Handle error if image upload fails
+                    echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file or no image uploaded.'));
                 }
+
+                // if (isset($_FILES['doc_name']) && $_FILES['doc_name']['error'] == UPLOAD_ERR_OK) {
+                //     $doc_name = $_FILES['doc_name']['name'];
+                //     $target_directory = "public/emp-docs/";
+                //     $doc_name = time() . "_" . basename($doc_name);
+                //     $doc_path = $target_directory . $doc_name;
+                //     $data['doc_path'] = $doc_path;
+                //     // Move the uploaded file to the desired directory
+                //     if (move_uploaded_file($_FILES['doc_name']['tmp_name'], $doc_path)) {
+                //         $data['doc_name'] = $doc_name;
+                //         $response = $Employee->addEmployeeDoc($data);
+                //     } else {
+                //         // Handle file moving failure
+                //         echo json_encode(array('success' => false, 'message' => 'Error moving the uploaded file.'));
+                //     }
+                // } else {
+                //     // If no image is uploaded, process the rest of the data
+                //     $response = $Employee->addEmployee($data);
+                //     echo json_encode(array('success' => false, 'message' => 'Image not uploaded.'));
+                // }
             } elseif ($method == 'POST' && $third_segment == 'address' && $forth_segment == 'add') {
                 $data = array(
                     'emp_id'  => $_POST['emp_id'],
