@@ -50,11 +50,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => 'Database error: ' . $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => "General error: " . $e->getMessage());
             echo json_encode($response);
         }
     }
