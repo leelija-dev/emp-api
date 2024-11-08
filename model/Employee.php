@@ -171,11 +171,13 @@ class Employee extends \db\DatabaseConnection
     }
 
 
-    public function addEmployeeDoc($id, $doc_name, $doc_path, $updated_by)
+    public function addEmployeeDoc($data)
     {
-        $doc_name = htmlspecialchars(trim($doc_name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        $doc_path = htmlspecialchars(trim($doc_path), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        
+        $id =  htmlspecialchars(trim($data['emp_id']), ENT_QUOTES, 'UTF-8');
+        $doc_name = htmlspecialchars(trim($data['doc_name']), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $doc_path = htmlspecialchars(trim($data['doc_path']), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+        $updated_by = htmlspecialchars(trim($data['updated_by']), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
 
         // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
         $doc_name = filter_var($doc_name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -355,7 +357,7 @@ class Employee extends \db\DatabaseConnection
             echo json_encode($response);
         }
     }
-
+//Update employee address using employee id
     public function updateEmpAddress($emp_id, $data)
     {
 
@@ -431,80 +433,7 @@ class Employee extends \db\DatabaseConnection
             }
         }
     }
-    // public function addEmployee($data)
-    // {
-    //     header('Content-Type: application/json');
-
-    //     $name = $data['name'];
-    //     $designation = $data['designation'];
-    //     $doj = $data['doj'];
-    //     $gender = $data['gender'];
-    //     $image = $data['image'];
-    //     $phone = $data['phone'];
-    //     $email = $data['email'];
-    //     $password = $data['password'];
-    //     $status = 0;
-    //     $featured = 0;
-
-
-
-    //     $name = htmlspecialchars(trim($name), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $designation = htmlspecialchars(trim($designation), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $doj = htmlspecialchars(trim($doj), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $gender = htmlspecialchars(trim($gender), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $image = htmlspecialchars(trim($image), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $phone = htmlspecialchars(trim($phone), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $email = htmlspecialchars(trim($email), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $password = htmlspecialchars(trim($password), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-    //     $featured = htmlspecialchars(trim($featured), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-
-    //     // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
-    //     $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $designation = filter_var($designation, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $doj = filter_var($doj, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $gender = filter_var($gender, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $image = filter_var($image, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $phone = filter_var($phone, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $email = filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    //     $featured = filter_var($featured, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-    //     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-    //     try {
-    //         // SQL query with placeholders
-    //         $sql = "INSERT INTO employees (name, designation, doj, gender, image, phone, email, password, status, featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    //         // Prepare the SQL statement
-    //         $stmt = mysqli_prepare($this->conn, $sql);
-
-    //         // Bind the parameters to the prepared statement
-    //         mysqli_stmt_bind_param($stmt, 'ssssssssii', $name, $designation, $doj, $gender, $image, $phone, $email, $password, $status, $featured);
-    //         // Execute the prepared statement
-    //         if (mysqli_stmt_execute($stmt)) {
-    //             // Success response
-    //             $response = array('success' => true, 'message' => 'Employee added successfully');
-    //             echo json_encode($response);
-    //         }
-
-    //         // Close the statement
-    //         mysqli_stmt_close($stmt);
-    //     } catch (\mysqli_sql_exception $e) {
-
-    //         error_log("Database error: " . $e->getMessage());
-
-    //         $response = array('success' => false, 'message' => 'Failed to add employee due to a database error');
-    //         echo json_encode($response);
-    //     } catch (\Exception $e) {
-    //         error_log("General error: " . $e->getMessage());
-
-
-    //         $response = array('success' => false, 'message' => 'An unexpected error occurred');
-    //         echo json_encode($response);
-    //     }
-    // }
+    
 
     public function addEmployee($data)
     {
@@ -537,8 +466,6 @@ class Employee extends \db\DatabaseConnection
             if (mysqli_stmt_execute($stmt)) {
                 // Get the ID of the inserted employee
                 $employee_id = mysqli_insert_id($this->conn);
-                // print_r($employee_id);  die();
-                // Insert data into emp_address table
                 $address_sql = "INSERT INTO employee_address (emp_id) VALUES (?)";
                 $address_stmt = mysqli_prepare($this->conn, $address_sql);
                 // $address = htmlspecialchars(trim($data['address']), ENT_QUOTES, 'UTF-8'); // Get and sanitize address from $data
@@ -801,6 +728,105 @@ class Employee extends \db\DatabaseConnection
 
             $response = array('success' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
+        }
+    }
+
+    public function changePassword($emp_id, $data)
+    {
+        header('Content-Type: application/json');
+
+        $password = $data['password'];
+        // $address_line2 = $data['address_line2'];
+        // $city =  $data['city'];
+        // $state = $data['state'];
+        // $pin = $data['pin'];
+        // $country = $data['country'];
+
+
+        $query = "SELECT * FROM employees WHERE emp_id = ? LIMIT 1";
+        $stmt = mysqli_prepare($this->conn, $query);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $emp_id);
+            $stmt->execute();
+
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
+
+            if ($row) {
+                $password = htmlspecialchars(trim($password), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $address_line2 = htmlspecialchars(trim($address_line2), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $city = htmlspecialchars(trim($city), ENT_QUOTES, 'UTF-8');
+                // $state = htmlspecialchars(trim($state), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $pin = htmlspecialchars(trim($pin), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+                // $country = htmlspecialchars(trim($country), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
+
+
+                // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
+                $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $address_line2 = filter_var($address_line2, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $city = filter_var($city, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $state = filter_var($state, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $pin = filter_var($pin, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                // $country = filter_var($country, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+                try {
+
+                    $sql = "UPDATE employees SET password = ? WHERE emp_id = ?";
+
+                    $stmt = mysqli_prepare($this->conn, $sql);
+
+
+                    mysqli_stmt_bind_param($stmt, 'si', $password, $emp_id);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $response = array('success' => true, 'message' => 'Employees password updated successfully');
+                        echo json_encode($response);
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } catch (\mysqli_sql_exception $e) {
+                    error_log("Database error: " . $e->getMessage());
+
+                    $response = array('success' => false, 'message' => 'Failed to update password due to a database error');
+                    echo json_encode($response);
+                } catch (\Exception $e) {
+                    error_log("General error: " . $e->getMessage());
+                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    echo json_encode($response);
+                }
+            } else {
+                $response = array('success' => false, 'message' => 'Employee id not found');
+                echo json_encode($response);
+            }
+        }
+    }
+
+    public function moveUpload($file) {
+        if (isset($file) && $file['error'] == UPLOAD_ERR_OK) {
+            $image = $file['name'];
+            $target_directory = "public/emp-docs/";
+            $new_file_name = time() . "_" . basename($image);
+            $target_path = $target_directory . $new_file_name;
+    
+            if (move_uploaded_file($file['tmp_name'], $target_path)) {
+                return $new_file_name; // Return the new filename if upload succeeds
+            } else {
+                return false; // Return false if upload fails
+            }
+        }
+        return false; // Return false if file is not set or there is an error
+    }
+
+    function deletePreviousImage($data, $directory) {
+        
+        $oldImage = $data['image'];
+        
+        if (!empty($oldImage) && file_exists($directory . $oldImage)) {
+            unlink($directory . $oldImage); // Delete old file
         }
     }
 }
