@@ -20,10 +20,17 @@ $method = $_SERVER['REQUEST_METHOD'];
 $url = $_SERVER['REQUEST_URI'];
 $url_path = ltrim($url, '/');
 $segments = explode('/', $url_path);
-print_r($segments);
 
-$first_segment = isset($segments[0]) ? $segments[0] : null;
-$second_segment = isset($segments[1]) ? $segments[1] : null;
+
+$whitelist = array('127.0.0.1', '::1');
+if (in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
+
+    $first_segment = isset($segments[0]) ? $segments[0] : null;
+    $second_segment = isset($segments[1]) ? $segments[1] : null;
+}else {
+    $second_segment = isset($segments[0]) ? $segments[0] : null;
+}
+
 switch ($second_segment) {
     case 'employees':
         require_once 'controller/employee.php';
