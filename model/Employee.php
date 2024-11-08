@@ -120,12 +120,12 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -158,14 +158,14 @@ class Employee extends \db\DatabaseConnection
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
             // Return failure response to the user
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -260,11 +260,11 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
@@ -349,11 +349,11 @@ class Employee extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -420,11 +420,11 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => 'Failed to update address due to a database error');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
@@ -489,11 +489,11 @@ class Employee extends \db\DatabaseConnection
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to add employee due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -569,11 +569,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -618,11 +618,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to get details due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -656,11 +656,11 @@ class Employee extends \db\DatabaseConnection
             }
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to fetch details due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -720,13 +720,13 @@ class Employee extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add address due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -791,11 +791,11 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => 'Failed to update password due to a database error');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
