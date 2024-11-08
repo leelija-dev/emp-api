@@ -36,7 +36,7 @@ class Location extends \db\DatabaseConnection
         $query = "SELECT name, iso3, numeric_code, iso2, phonecode, capital, currency, 
         currency_name, currency_symbol, tld, native, region, subregion, timezones 
         FROM countries WHERE id = ?";
-        //$query = "SELECT * FROM countries WHERE id = ?";
+        // $query = "SELECT * FROM countries WHERE id = ?";
         $stmt = mysqli_prepare($this->conn, $query);
 
         if ($stmt) {
@@ -46,7 +46,6 @@ class Location extends \db\DatabaseConnection
 
             $result = mysqli_stmt_get_result($stmt);
             $countryDetails = mysqli_fetch_assoc($result);
-
             if ($countryDetails) {
                 $response = array(
                     'success' => true,
