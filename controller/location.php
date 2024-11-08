@@ -34,8 +34,8 @@ function handleLocationRequest($method, $segments)
 
 
             //this section is for country details
-            else if ($method == 'GET' && $third_segment == 'country' && is_numeric($third_segment) && $forth_segment == null) {
-                $id = $third_segment;
+            else if ($method == 'GET' && $third_segment == 'country' && is_numeric($forth_segment)) {
+                $id = $forth_segment;
 
                 $response = $Location->getCountryDetails($id);
                 echo $response;
