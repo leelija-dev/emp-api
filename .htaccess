@@ -1,26 +1,7 @@
-# RewriteEngine On
-# RewriteBase /leelija/
-
-# Redirect all requests to index.php
-# RewriteRule ^(.*)$ index.php [QSA,L]
-
-
 # Enable Rewrite Engine
 RewriteEngine On
 
-# Ensure the request is not for a real file or directory
+# Rewrite all requests to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Rewrite all other requests to index.php
-RewriteRule ^(.*)$ index.php [QSA,L]
-
-# Set CORS headers for cross-origin requests
-<IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "OPTIONS,GET,POST,PUT,DELETE"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-</IfModule>
-
-# Prevent directory listing
-Options -Indexes
+RewriteRule ^ index.php [QSA,L]
