@@ -27,9 +27,7 @@ class Leave extends \db\DatabaseConnection
         $start_date = htmlspecialchars(trim($start_date), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $end_date = htmlspecialchars(trim($end_date), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        // $request_time = htmlspecialchars(trim($request_time), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-
-
+       
         // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
         $emp_id = filter_var($emp_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $type = filter_var($type, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -72,13 +70,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -185,11 +183,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' =>  $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -231,11 +229,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -282,11 +280,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -348,11 +346,11 @@ class Leave extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
@@ -412,11 +410,11 @@ class Leave extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => 'An unexpected error occurred');
+                    $response = array('success' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
@@ -466,13 +464,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -518,13 +516,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -571,13 +569,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -622,13 +620,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -705,12 +703,12 @@ class Leave extends \db\DatabaseConnection
 
     } catch (\mysqli_sql_exception $e) {
         error_log("Database error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => 'Failed to delete due to a database error.');
+        $response = array('success' => false, 'message' => $e->getMessage());
         echo json_encode($response);
 
     } catch (\Exception $e) {
         error_log("General error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => 'An unexpected error occurred.');
+        $response = array('success' => false, 'message' => $e->getMessage());
         echo json_encode($response);
     }
 }
@@ -754,12 +752,12 @@ public function deleteTypeDetails($id)
 
     } catch (\mysqli_sql_exception $e) {
         error_log("Database error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => 'Failed to delete due to a database error.');
+        $response = array('success' => false, 'message' => $e->getMessage());
         echo json_encode($response);
 
     } catch (\Exception $e) {
         error_log("General error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => 'An unexpected error occurred.');
+        $response = array('success' => false, 'message' => $e->getMessage());
         echo json_encode($response);
     }
 }

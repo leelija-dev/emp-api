@@ -166,13 +166,13 @@ class Ticket extends \db\DatabaseConnection
     
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to update document due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -207,11 +207,11 @@ class Ticket extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed get the data due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -247,12 +247,12 @@ class Ticket extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to get the data due to a database error');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('success' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }

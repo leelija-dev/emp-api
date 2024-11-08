@@ -127,14 +127,6 @@ function handleLeaveRequest($method, $segments)
                     echo "emp_id or updated_by is missing.";
                 }
             }
-            // else if ($method == 'POST' && $third_segment == 'updateRequestStatus' && is_numeric($forth_segment)) {
-            //     $id = $forth_segment;
-
-            //     $status = $_POST['status'];
-
-            //     $response = $Leave->updateRequestStatus($id, $status);
-            //     echo $response;
-            // } 
             else if ($method == 'PUT' && $third_segment == 'updateRequestStatus' && is_numeric($forth_segment)) {
                 $id = $forth_segment;
 
