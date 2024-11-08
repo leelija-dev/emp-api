@@ -17,8 +17,7 @@ require_once 'model/Location.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
-$url = $_SERVER['REQUEST_URI'];
-$url_path = ltrim($url, '/');
+$url_path = ltrim($_SERVER['REQUEST_URI'], '/');
 $segments = explode('/', $url_path);
 
 

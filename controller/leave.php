@@ -12,10 +12,19 @@ function handleLeaveRequest($method, $segments)
 {
     global $Leave;
 
-    $second_segment = isset($segments[1]) ? $segments[1] : null;
-    $third_segment = isset($segments[2]) ? $segments[2] : null;
-    $forth_segment = isset($segments[3]) ? $segments[3] : null;
-    $fifth_segment = isset($segments[4]) ? $segments[4] : null;
+    // $second_segment = isset($segments[1]) ? $segments[1] : null;
+    // $third_segment = isset($segments[2]) ? $segments[2] : null;
+    // $forth_segment = isset($segments[3]) ? $segments[3] : null;
+    // $fifth_segment = isset($segments[4]) ? $segments[4] : null;
+
+    require_once dirname(__DIR__) .'/SegmentHandler.php';
+
+    // Get segment values
+    $segmentValues = getSegmentValues($segments);
+    $second_segment = $segmentValues['second'];
+    $third_segment = $segmentValues['third'];
+    $forth_segment = $segmentValues['forth'];
+    $fifth_segment = $segmentValues['fifth'];
 
     switch ($second_segment) {
         case 'leave':

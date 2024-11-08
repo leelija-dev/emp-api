@@ -8,9 +8,18 @@ function handleEmployeeRequest($method, $segments)
 {
     global $Employee;
 
-    $second_segment = isset($segments[1]) ? $segments[1] : null;
-    $third_segment = isset($segments[2]) ? $segments[2] : null;
-    $forth_segment = isset($segments[3]) ? $segments[3] : null;
+    // $second_segment = isset($segments[1]) ? $segments[1] : null;
+    // $third_segment = isset($segments[2]) ? $segments[2] : null;
+    // $forth_segment = isset($segments[3]) ? $segments[3] : null;
+    
+    require_once dirname(__DIR__) .'/SegmentHandler.php';
+
+    // Get segment values
+    $segmentValues = getSegmentValues($segments);
+    $first_segment = $segmentValues['first'];
+    $second_segment = $segmentValues['second'];
+    $third_segment = $segmentValues['third'];
+    $forth_segment = $segmentValues['forth'];
 
     switch ($second_segment) {
         case 'employees':
