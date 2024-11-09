@@ -18,11 +18,11 @@ class Location extends \db\DatabaseConnection
 
             $countries = mysqli_fetch_all($result, MYSQLI_ASSOC);
             if ($countries) {
-                $response = array('success' => true, 'message' => 'Country Names Fetched successfully', 'data' => $countries);
+                $response = array('status'=> true, 'message' => 'Country Names Fetched successfully', 'data' => $countries);
                 echo json_encode($response);
                 die();
             } else {
-                $response = array('success' => false, 'message' => 'Failed to fetch details');
+                $response = array('status'=> false, 'message' => 'Failed to fetch details');
                 echo json_encode($response);
                 die();
             }
@@ -48,7 +48,7 @@ class Location extends \db\DatabaseConnection
             $countryDetails = mysqli_fetch_assoc($result);
             if ($countryDetails) {
                 $response = array(
-                    'success' => true,
+                    'status'=> true,
                     'message' => 'Country Details Fetched successfully',
                     'data' => $countryDetails
                 );
@@ -56,7 +56,7 @@ class Location extends \db\DatabaseConnection
                 die();
             } else {
                 $response = array(
-                    'success' => false,
+                    'status'=> false,
                     'message' => 'Failed to fetch details'
                 );
                 echo json_encode($response);
@@ -64,7 +64,7 @@ class Location extends \db\DatabaseConnection
             }
         } else {
             $response = array(
-                'success' => false,
+                'status'=> false,
                 'message' => 'There is an error'
             );
             echo json_encode($response);
@@ -90,7 +90,7 @@ class Location extends \db\DatabaseConnection
             
             if ($stateDetails) {
                 $response = array(
-                    'success' => true,
+                    'status'=> true,
                     'message' => 'States Fetched successfully',
                     'data' => $stateDetails
                 );
@@ -98,7 +98,7 @@ class Location extends \db\DatabaseConnection
                 die();
             } else {
                 $response = array(
-                    'success' => false,
+                    'status'=> false,
                     'message' => 'Failed to fetch details'
                 );
                 echo json_encode($response);
@@ -106,7 +106,7 @@ class Location extends \db\DatabaseConnection
             }
         } else {
             $response = array(
-                'success' => false,
+                'status'=> false,
                 'message' => 'There is an error'
             );
             echo json_encode($response);
@@ -131,7 +131,7 @@ class Location extends \db\DatabaseConnection
             
             if ($cityDetails) {
                 $response = array(
-                    'success' => true,
+                    'status'=> true,
                     'message' => 'cities Fetched successfully',
                     'data' => $cityDetails
                 );
@@ -139,7 +139,7 @@ class Location extends \db\DatabaseConnection
                 die();
             } else {
                 $response = array(
-                    'success' => false,
+                    'status'=> false,
                     'message' => 'Failed to fetch details'
                 );
                 echo json_encode($response);
@@ -147,7 +147,7 @@ class Location extends \db\DatabaseConnection
             }
         } else {
             $response = array(
-                'success' => false,
+                'status'=> false,
                 'message' => 'There is an error'
             );
             echo json_encode($response);

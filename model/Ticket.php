@@ -34,27 +34,27 @@ class Ticket extends \db\DatabaseConnection
 
                     if (mysqli_stmt_execute($stmt2)) {
                         $response = array(
-                            'success' => true,
+                            'status' => true,
                             'message' => 'Ticket added successfully'
                         );
                     } else {
                         $response = array(
-                            'success' => false,
+                            'status' => false,
                             'message' => 'Ticket added but failed to insert the file'
                         );
                     }
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Ticket added but there is an error with file'
                     );
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Failed to submit ticket');
+                $response = array('status' => false, 'message' => 'Failed to submit ticket');
             }
         } else {
             $response = array(
-                'success' => false,
+                'status' => false,
                 'message' => 'There is an error'
             );
         }
@@ -90,27 +90,27 @@ class Ticket extends \db\DatabaseConnection
 
                     if (mysqli_stmt_execute($stmt2)) {
                         $response = array(
-                            'success' => true,
+                            'status' => true,
                             'message' => 'Response added successfully'
                         );
                     } else {
                         $response = array(
-                            'success' => false,
+                            'status' => false,
                             'message' => 'Response added but failed to insert the file'
                         );
                     }
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Response added but there is an error with file'
                     );
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Failed to submit ticket');
+                $response = array('status' => false, 'message' => 'Failed to submit ticket');
             }
         } else {
             $response = array(
-                'success' => false,
+                'status' => false,
                 'message' => 'There is an error'
             );
         }
@@ -145,7 +145,7 @@ class Ticket extends \db\DatabaseConnection
 
                 if ($ticketDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Employee and Document Details Fetched successfully',
                         'data' => $ticketDetails
                     );
@@ -153,7 +153,7 @@ class Ticket extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -166,13 +166,13 @@ class Ticket extends \db\DatabaseConnection
     
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -195,11 +195,11 @@ class Ticket extends \db\DatabaseConnection
 
                 $tickets = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($tickets) {
-                    $response = array('success' => true, 'message' => 'Tickets Fetched successfully', 'data' => $tickets);
+                    $response = array('status' => true, 'message' => 'Tickets Fetched successfully', 'data' => $tickets);
                     echo json_encode($response);
                     die();
                 } else {
-                    $response = array('success' => false, 'message' => 'Failed to fetch Tickets Details');
+                    $response = array('status' => false, 'message' => 'Failed to fetch Tickets Details');
                     echo json_encode($response);
                     die();
                 }
@@ -207,11 +207,11 @@ class Ticket extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -235,11 +235,11 @@ class Ticket extends \db\DatabaseConnection
 
                 $ticketData = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($ticketData) {
-                    $response = array('success' => true, 'message' => 'Ticket Data Fetched successfully', 'data' => $ticketData);
+                    $response = array('status' => true, 'message' => 'Ticket Data Fetched successfully', 'data' => $ticketData);
                     echo json_encode($response);
                     die();
                 } else {
-                    $response = array('success' => false, 'message' => 'Failed to fetch Tickets Details');
+                    $response = array('status' => false, 'message' => 'Failed to fetch Tickets Details');
                     echo json_encode($response);
                     die();
                 }
@@ -247,12 +247,12 @@ class Ticket extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }

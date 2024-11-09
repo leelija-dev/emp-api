@@ -42,7 +42,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($emp_id) || empty($type) || empty($duration) || empty($request_to) || empty($start_date) || empty($end_date) || empty($status)
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -58,9 +58,8 @@ class Leave extends \db\DatabaseConnection
 
             mysqli_stmt_bind_param($stmt, 'issssss', $emp_id, $type, $duration, $request_to, $start_date, $end_date, $status);
            
-            if (mysqli_stmt_execute($stmt)) {
-            
-                $response = array('success' => true, 'message' => 'Leave request added successfully');
+            if (mysqli_stmt_execute($stmt)) {           
+                $response = array('status' => true, 'message' => 'Leave request added successfully');
                 echo json_encode($response);
             }
 
@@ -70,13 +69,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -94,8 +93,7 @@ class Leave extends \db\DatabaseConnection
         $status = htmlspecialchars(trim($status), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $updated_by = htmlspecialchars(trim($updated_by), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
         $allocated_time = htmlspecialchars(trim($allocated_time), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-        // $request_time = htmlspecialchars(trim($request_time), ENT_QUOTES, 'UTF-8'); // Escape special HTML characters
-
+       
 
         // Use filter_var for sanitizing inputs (ensures the string is clean from unusual characters)
         $request_id = filter_var($request_id, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -107,7 +105,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($request_id) || empty($status) || empty($updated_by) || empty($allocated_time)
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -124,7 +122,7 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 'isss', $request_id, $status, $updated_by, $allocated_time);
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Response added successfully');
+                $response = array('status' => true, 'message' => 'Response added successfully');
                 echo json_encode($response);
             }
 
@@ -134,13 +132,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+            $response = array('status' => false, 'message' => 'Failed to add request due to a database error');
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => 'An unexpected error occurred');
+            $response = array('status' => false, 'message' => 'An unexpected error occurred');
             echo json_encode($response);
         }
     }
@@ -163,7 +161,7 @@ class Leave extends \db\DatabaseConnection
                 $responseDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($responseDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Leave response fetched successfully',
                         'data' => $responseDetails
                     );
@@ -171,7 +169,7 @@ class Leave extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -183,11 +181,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' =>  $e->getMessage());
+            $response = array('status' => false, 'message' =>  $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -209,7 +207,7 @@ class Leave extends \db\DatabaseConnection
                 $responseDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($responseDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Request details fetched successfully',
                         'data' => $responseDetails
                     );
@@ -217,7 +215,7 @@ class Leave extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -229,11 +227,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -260,7 +258,7 @@ class Leave extends \db\DatabaseConnection
 
                 if ($leaveDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Leave Request and Response Details Fetched successfully',
                         'data' => $leaveDetails
                     );
@@ -268,7 +266,7 @@ class Leave extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -280,11 +278,11 @@ class Leave extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -320,7 +318,7 @@ class Leave extends \db\DatabaseConnection
                 $allocated_time = filter_var($allocated_time, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
                 if (empty($request_id) || empty($status) || empty($updated_by) || empty($allocated_time)) {
-                    $response = array('success' => false, 'message' => 'Input field may be invalid');
+                    $response = array('status' => false, 'message' => 'Input field may be invalid');
                     echo json_encode($response);
                     return;
                 }
@@ -338,7 +336,7 @@ class Leave extends \db\DatabaseConnection
                     mysqli_stmt_bind_param($stmt, 'isssi', $request_id, $status, $updated_by, $allocated_time, $id);
 
                     if (mysqli_stmt_execute($stmt)) {
-                        $response = array('success' => true, 'message' => 'Leave Response updated successfully');
+                        $response = array('status' => true, 'message' => 'Leave Response updated successfully');
                         echo json_encode($response);
                     }
 
@@ -346,15 +344,15 @@ class Leave extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Document id not found');
+                $response = array('status' => false, 'message' => 'Document id not found');
                 echo json_encode($response);
             }
         }
@@ -384,7 +382,7 @@ class Leave extends \db\DatabaseConnection
                 $status = filter_var($status, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
                 if (empty($status)) {
-                    $response = array('success' => false, 'message' => 'Input field may be invalid');
+                    $response = array('status' => false, 'message' => 'Input field may be invalid');
                     echo json_encode($response);
                     return;
                 }
@@ -402,7 +400,7 @@ class Leave extends \db\DatabaseConnection
                     mysqli_stmt_bind_param($stmt, 'si', $status, $id);
 
                     if (mysqli_stmt_execute($stmt)) {
-                        $response = array('success' => true, 'message' => 'Request Status updated successfully');
+                        $response = array('status' => true, 'message' => 'Request Status updated successfully');
                         echo json_encode($response);
                     }
 
@@ -410,15 +408,15 @@ class Leave extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Document id not found');
+                $response = array('status' => false, 'message' => 'Document id not found');
                 echo json_encode($response);
             }
         }
@@ -437,7 +435,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($name)
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -454,7 +452,7 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 's', $name);
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Leave Type added successfully');
+                $response = array('status' => true, 'message' => 'Leave Type added successfully');
                 echo json_encode($response);
             }
 
@@ -464,13 +462,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -488,7 +486,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($name)
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -506,7 +504,7 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 'si', $name, $id);
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Leave Type updated successfully');
+                $response = array('status' => true, 'message' => 'Leave Type updated successfully');
                 echo json_encode($response);
             }
 
@@ -516,13 +514,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -542,7 +540,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($type) ||  empty($duration) 
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -559,7 +557,7 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 'ss', $type, $duration);
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Leave Details added successfully');
+                $response = array('status' => true, 'message' => 'Leave Details added successfully');
                 echo json_encode($response);
             }
 
@@ -569,13 +567,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -594,7 +592,7 @@ class Leave extends \db\DatabaseConnection
         if (
             empty($type) || empty($duration)
         ) {
-            $response = array('success' => false, 'message' => 'Field may be null or invalid');
+            $response = array('status' => false, 'message' => 'Field may be null or invalid');
             echo json_encode($response);
             return;
         }
@@ -610,7 +608,7 @@ class Leave extends \db\DatabaseConnection
             mysqli_stmt_bind_param($stmt, 'ssi', $type, $duration, $id);
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Details of Leave Type updated successfully');
+                $response = array('status' => true, 'message' => 'Details of Leave Type updated successfully');
                 echo json_encode($response);
             }
 
@@ -620,13 +618,13 @@ class Leave extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -643,7 +641,7 @@ class Leave extends \db\DatabaseConnection
     //         mysqli_stmt_bind_param($stmt, 'i', $id);
 
     //         if (mysqli_stmt_execute($stmt)) {
-    //             $response = array('success' => true, 'message' => 'Leave Type deleted successfully');
+    //             $response = array('status' => true, 'message' => 'Leave Type deleted successfully');
     //             echo json_encode($response);
     //         }
 
@@ -653,13 +651,13 @@ class Leave extends \db\DatabaseConnection
 
     //         error_log("Database error: " . $e->getMessage());
 
-    //         $response = array('success' => false, 'message' => 'Failed to add request due to a database error');
+    //         $response = array('status' => false, 'message' => 'Failed to add request due to a database error');
     //         echo json_encode($response);
     //     } catch (\Exception $e) {
     //         error_log("General error: " . $e->getMessage());
 
 
-    //         $response = array('success' => false, 'message' => 'An unexpected error occurred');
+    //         $response = array('status' => false, 'message' => 'An unexpected error occurred');
     //         echo json_encode($response);
     //     }
     // }
@@ -679,7 +677,7 @@ class Leave extends \db\DatabaseConnection
 
         if ($row['count'] > 0) {
             // If the record is referenced, do not allow deletion
-            $response = array('success' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
+            $response = array('status' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
             echo json_encode($response);
             return; // Exit early
         }
@@ -691,11 +689,11 @@ class Leave extends \db\DatabaseConnection
         mysqli_stmt_bind_param($stmt, 'i', $id);
 
         if (mysqli_stmt_execute($stmt)) {
-            $response = array('success' => true, 'message' => 'Leave Type deleted successfully.');
+            $response = array('status' => true, 'message' => 'Leave Type deleted successfully.');
             echo json_encode($response);
         } else {
             // Handle failure case for the DELETE statement
-            $response = array('success' => false, 'message' => 'Failed to delete the Leave Type.');
+            $response = array('status' => false, 'message' => 'Failed to delete the Leave Type.');
             echo json_encode($response);
         }
 
@@ -703,12 +701,12 @@ class Leave extends \db\DatabaseConnection
 
     } catch (\mysqli_sql_exception $e) {
         error_log("Database error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => $e->getMessage());
+        $response = array('status' => false, 'message' => $e->getMessage());
         echo json_encode($response);
 
     } catch (\Exception $e) {
         error_log("General error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => $e->getMessage());
+        $response = array('status' => false, 'message' => $e->getMessage());
         echo json_encode($response);
     }
 }
@@ -728,7 +726,7 @@ public function deleteTypeDetails($id)
 
         // if ($row['count'] > 0) {
         //     // If the record is referenced, do not allow deletion
-        //     $response = array('success' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
+        //     $response = array('status' => false, 'message' => 'Cannot delete: Leave Type is referenced in other records.');
         //     echo json_encode($response);
         //     return; // Exit early
         // }
@@ -740,11 +738,11 @@ public function deleteTypeDetails($id)
         mysqli_stmt_bind_param($stmt, 'i', $id);
 
         if (mysqli_stmt_execute($stmt)) {
-            $response = array('success' => true, 'message' => 'Leave Type deleted successfully.');
+            $response = array('status' => true, 'message' => 'Leave Type deleted successfully.');
             echo json_encode($response);
         } else {
             // Handle failure case for the DELETE statement
-            $response = array('success' => false, 'message' => 'Failed to delete the Leave Type.');
+            $response = array('status' => false, 'message' => 'Failed to delete the Leave Type.');
             echo json_encode($response);
         }
 
@@ -752,12 +750,12 @@ public function deleteTypeDetails($id)
 
     } catch (\mysqli_sql_exception $e) {
         error_log("Database error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => $e->getMessage());
+        $response = array('status' => false, 'message' => $e->getMessage());
         echo json_encode($response);
 
     } catch (\Exception $e) {
         error_log("General error: " . $e->getMessage());
-        $response = array('success' => false, 'message' => $e->getMessage());
+        $response = array('status' => false, 'message' => $e->getMessage());
         echo json_encode($response);
     }
 }

@@ -5,7 +5,7 @@ namespace model;
 require_once("config.php");
 
 class Employee extends \db\DatabaseConnection
-// class Employee extends DatabaseConnection
+
 {
     //GET EMPLOYEE DETAILS USING EMPLOYEE ID
     public function getEmployeeDetails($id)
@@ -30,7 +30,7 @@ class Employee extends \db\DatabaseConnection
                 $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($employeeDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Employee and Document Details Fetched successfully',
                         'data' => $employeeDetails
                     );
@@ -38,7 +38,7 @@ class Employee extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -50,11 +50,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => 'Database error: ' . $e->getMessage());
+            $response = array('status' => false, 'message' => 'Database error: ' . $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => "General error: " . $e->getMessage());
+            $response = array('status' => false, 'message' => "General error: " . $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -108,11 +108,11 @@ class Employee extends \db\DatabaseConnection
 
                 $employees = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($employees) {
-                    $response = array('success' => true, 'message' => 'Employee Names Fetched successfully', 'data' => $employees);
+                    $response = array('status' => true, 'message' => 'Employee Names Fetched successfully', 'data' => $employees);
                     echo json_encode($response);
                     die();
                 } else {
-                    $response = array('success' => false, 'message' => 'Failed to fetch Employee Name');
+                    $response = array('status' => false, 'message' => 'Failed to fetch Employee Name');
                     echo json_encode($response);
                     die();
                 }
@@ -120,12 +120,12 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -144,11 +144,11 @@ class Employee extends \db\DatabaseConnection
 
                 $employees = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($employees) {
-                    $response = array('success' => true, 'message' => 'Employees Details Fetched successfully', 'data' => $employees);
+                    $response = array('status' => true, 'message' => 'Employees Details Fetched successfully', 'data' => $employees);
                     echo json_encode($response);
                     die();
                 } else {
-                    $response = array('success' => false, 'message' => 'Failed to fetch details');
+                    $response = array('status' => false, 'message' => 'Failed to fetch details');
                     echo json_encode($response);
                     die();
                 }
@@ -158,14 +158,14 @@ class Employee extends \db\DatabaseConnection
             error_log("Database error: " . $e->getMessage());
 
             // Return failure response to the user
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             // Handle any other general exceptions
             error_log("General error: " . $e->getMessage());
 
             // Return failure response to the user
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -192,11 +192,11 @@ class Employee extends \db\DatabaseConnection
 
             if (mysqli_stmt_execute($stmt)) {
 
-                $response = array('success' => true, 'message' => 'Employee Documents Submitted successfully');
+                $response = array('status' => true, 'message' => 'Employee Documents Submitted successfully');
                 echo json_encode($response);
                 die();
             } else {
-                $response = array('success' => false, 'message' => 'Failed to Submit documents');
+                $response = array('status' => false, 'message' => 'Failed to Submit documents');
                 echo json_encode($response);
                 die();
             }
@@ -234,7 +234,7 @@ class Employee extends \db\DatabaseConnection
 
 
                 if (empty($doc_name) || empty($doc_path) || empty($updated_by)) {
-                    $response = array('success' => false, 'message' => 'Document Name, Path, or Updated By is invalid');
+                    $response = array('status' => false, 'message' => 'Document Name, Path, or Updated By is invalid');
                     echo json_encode($response);
                     return;
                 }
@@ -252,7 +252,7 @@ class Employee extends \db\DatabaseConnection
                     mysqli_stmt_bind_param($stmt, 'isssi', $emp_id, $doc_name, $doc_path, $updated_by, $doc_id);
 
                     if (mysqli_stmt_execute($stmt)) {
-                        $response = array('success' => true, 'message' => 'Employee Document updated successfully');
+                        $response = array('status' => true, 'message' => 'Employee Document updated successfully');
                         echo json_encode($response);
                     }
 
@@ -260,15 +260,15 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Document id not found');
+                $response = array('status' => false, 'message' => 'Document id not found');
                 echo json_encode($response);
             }
         }
@@ -319,7 +319,7 @@ class Employee extends \db\DatabaseConnection
         //     empty($name) || empty($designation) || empty($doj) || empty($gender) || empty($phone) || empty($email)
         //     || empty($password) || empty($status) || empty($featured)
         // ) {
-        //     $response = array('success' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
+        //     $response = array('status' => false, 'message' => 'Document Name, designation, doj, gender, image, phone, email, password, status or featured is invalid');
         //     echo json_encode($response);
         //     return;
         // }
@@ -339,7 +339,7 @@ class Employee extends \db\DatabaseConnection
 
 
             if (mysqli_stmt_execute($stmt)) {
-                $response = array('success' => true, 'message' => 'Employee updated successfully');
+                $response = array('status' => true, 'message' => 'Employee updated successfully');
                 echo json_encode($response);
             }
 
@@ -349,11 +349,11 @@ class Employee extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -412,7 +412,7 @@ class Employee extends \db\DatabaseConnection
                     mysqli_stmt_bind_param($stmt, 'issssssi', $emp_id, $address_line1, $address_line2, $city, $state, $pin, $country, $emp_id);
 
                     if (mysqli_stmt_execute($stmt)) {
-                        $response = array('success' => true, 'message' => 'Employee Address updated successfully');
+                        $response = array('status' => true, 'message' => 'Employee Address updated successfully');
                         echo json_encode($response);
                     }
 
@@ -420,15 +420,15 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Employee id not found');
+                $response = array('status' => false, 'message' => 'Employee id not found');
                 echo json_encode($response);
             }
         }
@@ -473,11 +473,11 @@ class Employee extends \db\DatabaseConnection
 
                 if (mysqli_stmt_execute($address_stmt)) {
                     // Success response if both inserts are successful
-                    $response = array('success' => true, 'message' => 'Employee and address added successfully');
+                    $response = array('status' => true, 'message' => 'Employee and address added successfully');
                     echo json_encode($response);
                 } else {
                     // Handle emp_address insert failure
-                    $response = array('success' => false, 'message' => 'Failed to add employee address');
+                    $response = array('status' => false, 'message' => 'Failed to add employee address');
                     echo json_encode($response);
                 }
 
@@ -489,11 +489,11 @@ class Employee extends \db\DatabaseConnection
             mysqli_stmt_close($stmt);
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -549,7 +549,7 @@ class Employee extends \db\DatabaseConnection
                 $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($employeeDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Team Details Fetched successfully',
                         'data' => $employeeDetails
                     );
@@ -557,7 +557,7 @@ class Employee extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -569,11 +569,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -598,7 +598,7 @@ class Employee extends \db\DatabaseConnection
                 $employeeDetails = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($employeeDetails) {
                     $response = array(
-                        'success' => true,
+                        'status' => true,
                         'message' => 'Featured Member Details Fetched successfully',
                         'data' => $employeeDetails
                     );
@@ -606,7 +606,7 @@ class Employee extends \db\DatabaseConnection
                     die();
                 } else {
                     $response = array(
-                        'success' => false,
+                        'status' => false,
                         'message' => 'Failed to fetch details'
                     );
                     echo json_encode($response);
@@ -618,11 +618,11 @@ class Employee extends \db\DatabaseConnection
         } catch (\mysqli_sql_exception $e) {
 
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -647,20 +647,20 @@ class Employee extends \db\DatabaseConnection
                 $result = mysqli_stmt_get_result($stmt);
                 $addresses = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 if ($addresses) {
-                    $response = array('success' => true, 'message' => 'Employees Details Fetched successfully', 'data' => $addresses);
+                    $response = array('status' => true, 'message' => 'Employees Details Fetched successfully', 'data' => $addresses);
                     echo json_encode($response);
                 } else {
-                    $response = array('success' => false, 'message' => 'Failed to fetch details');
+                    $response = array('status' => false, 'message' => 'Failed to fetch details');
                     echo json_encode($response);
                 }
             }
         } catch (\mysqli_sql_exception $e) {
             error_log("Database error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -710,7 +710,7 @@ class Employee extends \db\DatabaseConnection
             // Execute the prepared statement
             if (mysqli_stmt_execute($stmt)) {
                 // Success response
-                $response = array('success' => true, 'message' => 'Employee address added successfully');
+                $response = array('status' => true, 'message' => 'Employee address added successfully');
                 echo json_encode($response);
             }
 
@@ -720,13 +720,13 @@ class Employee extends \db\DatabaseConnection
 
             error_log("Database error: " . $e->getMessage());
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         } catch (\Exception $e) {
             error_log("General error: " . $e->getMessage());
 
 
-            $response = array('success' => false, 'message' => $e->getMessage());
+            $response = array('status' => false, 'message' => $e->getMessage());
             echo json_encode($response);
         }
     }
@@ -783,7 +783,7 @@ class Employee extends \db\DatabaseConnection
                     mysqli_stmt_bind_param($stmt, 'si', $password, $emp_id);
 
                     if (mysqli_stmt_execute($stmt)) {
-                        $response = array('success' => true, 'message' => 'Employees password updated successfully');
+                        $response = array('status' => true, 'message' => 'Employees password updated successfully');
                         echo json_encode($response);
                     }
 
@@ -791,15 +791,15 @@ class Employee extends \db\DatabaseConnection
                 } catch (\mysqli_sql_exception $e) {
                     error_log("Database error: " . $e->getMessage());
 
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 } catch (\Exception $e) {
                     error_log("General error: " . $e->getMessage());
-                    $response = array('success' => false, 'message' => $e->getMessage());
+                    $response = array('status' => false, 'message' => $e->getMessage());
                     echo json_encode($response);
                 }
             } else {
-                $response = array('success' => false, 'message' => 'Employee id not found');
+                $response = array('status' => false, 'message' => 'Employee id not found');
                 echo json_encode($response);
             }
         }
@@ -813,12 +813,12 @@ class Employee extends \db\DatabaseConnection
             $target_path = $target_directory . $new_file_name;
     
             if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                return $new_file_name; // Return the new filename if upload succeeds
+                return $new_file_name; 
             } else {
-                return false; // Return false if upload fails
+                return false; 
             }
         }
-        return false; // Return false if file is not set or there is an error
+        return false; 
     }
 
     function deletePreviousImage($data, $directory) {
